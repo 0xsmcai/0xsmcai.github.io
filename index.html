@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0xSMC — Community Liquidity Engine</title>
+<meta name="description" content="Autonomous AI agent that coordinates community capital into actively managed LP positions on Base chain.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #00ff88;
+    --green-dim: #00cc6a;
+    --red: #ff4444;
+    --yellow: #ffaa00;
+    --gray: #666666;
+    --gray-dim: #444444;
+    --gray-dark: #222222;
+    --bg: #0a0a0a;
+    --bg-panel: #0f0f0f;
+    --white: #e0e0e0;
+    --white-bright: #ffffff;
+    --cyan: #00d4ff;
+    --magenta: #ff44cc;
+  }
+
+  html {
+    font-size: 14px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray-dark) var(--bg);
+  }
+
+  body {
+    background: var(--bg);
+    background-image: radial-gradient(ellipse at 50% 0%, rgba(0, 255, 136, 0.03), var(--bg) 70%);
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* CRT scanlines + RGB sub-pixel simulation */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
+      linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.015), rgba(0, 0, 255, 0.03));
+    background-size: 100% 3px, 3px 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Slow moving scanline bar */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 255, 136, 0.04) 50%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    animation: scanbar 8s linear infinite;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  @keyframes scanbar {
+    0% { top: -80px; }
+    100% { top: 100vh; }
+  }
+
+  ::selection {
+    background: var(--green);
+    color: var(--bg);
+  }
+
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 20px;
+    animation: flicker 4s infinite;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 40px 0 0;
+  }
+
+  .banner {
+    border: 1px solid var(--gray-dark);
+    padding: 20px 24px;
+    position: relative;
+    background: var(--bg-panel);
+  }
+
+  .banner-top, .banner-bottom {
+    color: var(--gray-dark);
+    font-size: 0.85rem;
+    user-select: none;
+  }
+
+  .ascii-logo {
+    color: var(--green);
+    font-size: 0.55rem;
+    line-height: 1.1;
+    margin: 0;
+    white-space: pre;
+    font-variant-ligatures: none;
+    overflow-x: auto;
+  }
+
+  .banner-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+
+  .banner-sub {
+    color: var(--white);
+    font-weight: 400;
+    font-size: 0.95rem;
+    margin-top: 4px;
+  }
+
+  .banner-tagline {
+    color: var(--gray);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  .status-line {
+    margin-top: 16px;
+    padding: 10px 0;
+    border-top: 1px solid var(--gray-dark);
+    font-size: 0.85rem;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 0;
+  }
+
+  .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+  .dot-red { background: var(--red); }
+  .dot-gray { background: var(--gray); }
+
+  .blink {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Cursor blink — full block character style */
+  .cursor::after {
+    content: '\2588';
+    color: var(--green);
+    animation: blink 1s step-end infinite;
+    text-shadow: 0 0 5px rgba(0, 255, 136, 0.7);
+  }
+
+  /* Subtle CRT flicker on the whole page */
+  @keyframes flicker {
+    0% { opacity: 0.97; }
+    5% { opacity: 0.98; }
+    10% { opacity: 0.99; }
+    15% { opacity: 0.97; }
+    20% { opacity: 1; }
+    50% { opacity: 0.98; }
+    80% { opacity: 0.99; }
+    90% { opacity: 0.97; }
+    100% { opacity: 0.98; }
+  }
+
+
+  /* ── SECTIONS ── */
+  .section {
+    margin-top: 40px;
+  }
+
+  .section-header {
+    color: var(--cyan);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-dark);
+    text-transform: uppercase;
+  }
+
+  .section-header .prompt {
+    color: var(--green);
+    margin-right: 8px;
+  }
+
+  .section-header .path {
+    color: var(--gray);
+  }
+
+  /* ── WHAT IS THIS ── */
+  .description {
+    color: var(--white);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    padding-left: 20px;
+    border-left: 2px solid var(--gray-dark);
+  }
+
+  /* ── PROBLEM ── */
+  .problem-list {
+    list-style: none;
+  }
+
+  .problem-list li {
+    padding: 6px 0;
+    font-size: 0.9rem;
+  }
+
+  .problem-list .prompt-marker {
+    color: var(--red);
+    margin-right: 8px;
+  }
+
+  .problem-list .result {
+    color: var(--yellow);
+    font-weight: 500;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 8px;
+  }
+
+  .flow-step {
+    padding: 16px 12px;
+    border: 1px solid var(--gray-dark);
+    text-align: center;
+    position: relative;
+    background: var(--bg-panel);
+  }
+
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--green);
+    font-size: 1.2rem;
+    z-index: 1;
+    width: 24px;
+    text-align: center;
+  }
+
+  .flow-num {
+    color: var(--gray);
+    font-size: 0.7rem;
+    margin-bottom: 4px;
+  }
+
+  .flow-label {
+    color: var(--green);
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+
+  .flow-desc {
+    color: var(--gray);
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+
+  /* ── ASCII TABLE ── */
+  .ascii-table {
+    font-size: 0.85rem;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .ascii-table pre {
+    color: var(--white);
+    line-height: 1.5;
+    white-space: pre;
+  }
+
+  .ascii-table .header-row { color: var(--cyan); }
+  .ascii-table .border-row { color: var(--gray-dark); }
+  .ascii-table .val-green { color: var(--green); }
+  .ascii-table .val-yellow { color: var(--yellow); }
+  .ascii-table .val-red { color: var(--red); }
+
+  /* ── FEE MODEL ── */
+  .fee-box {
+    border: 1px solid var(--gray-dark);
+    background: var(--bg-panel);
+    padding: 20px 24px;
+  }
+
+  .fee-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--gray-dark);
+    font-size: 0.85rem;
+  }
+
+  .fee-row:last-child { border-bottom: none; }
+
+  .fee-label { color: var(--gray); }
+  .fee-value { color: var(--green); font-weight: 500; }
+  .fee-note {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-dark);
+    font-size: 0.8rem;
+    color: var(--yellow);
+  }
+
+  /* ── ROADMAP ── */
+  .roadmap {
+    font-size: 0.9rem;
+    line-height: 2;
+  }
+
+  .roadmap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .roadmap-tree { color: var(--gray-dark); user-select: none; min-width: 24px; }
+  .roadmap-phase { color: var(--white); }
+  .roadmap-status { margin-left: auto; font-size: 0.8rem; white-space: nowrap; }
+  .active { color: var(--green); }
+  .planned { color: var(--gray); }
+
+  /* ── TECH STACK ── */
+  .stack-list {
+    list-style: none;
+    font-size: 0.85rem;
+  }
+
+  .stack-list li {
+    padding: 6px 0;
+    display: flex;
+    gap: 8px;
+  }
+
+  .stack-name { color: var(--green); min-width: 200px; }
+  .stack-dots { color: var(--gray-dark); flex-shrink: 0; }
+  .stack-desc { color: var(--gray); }
+
+  /* ── KILL CRITERIA ── */
+  .kill-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .kill-table th {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--gray);
+    color: var(--cyan);
+    font-weight: 500;
+  }
+
+  .kill-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--gray-dark);
+    color: var(--white);
+  }
+
+  .kill-table tr:last-child td { border-bottom: none; }
+  .kill-table .metric { color: var(--yellow); }
+  .kill-table .action { color: var(--red); }
+
+  /* ── LEGACY HOLDERS ── */
+  .holders-box {
+    border: 1px solid var(--gray-dark);
+    background: var(--bg-panel);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .holders-count {
+    font-size: 1.8rem;
+    color: var(--green);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .holders-label {
+    font-size: 0.85rem;
+    color: var(--gray);
+  }
+
+  .holders-status {
+    font-size: 0.8rem;
+    color: var(--yellow);
+    margin-top: 4px;
+  }
+
+  /* ── LINKS ── */
+  .links-list {
+    list-style: none;
+    font-size: 0.9rem;
+  }
+
+  .links-list li {
+    padding: 8px 0;
+  }
+
+  .links-list .cmd { color: var(--green); }
+  .links-list .arrow { color: var(--gray-dark); margin: 0 12px; }
+  .links-list a { color: var(--white); }
+  .links-list a:hover { color: var(--green); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    margin-top: 60px;
+    padding: 20px 0;
+    border-top: 1px solid var(--gray-dark);
+    font-size: 0.7rem;
+    color: var(--gray-dim);
+    line-height: 1.8;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 20px;
+    padding-bottom: 40px;
+    font-size: 0.75rem;
+    color: var(--gray-dark);
+    text-align: center;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    html { font-size: 12px; }
+
+    .flow {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: '↓';
+      right: 50%;
+      top: auto;
+      bottom: -14px;
+      transform: translateX(50%);
+    }
+
+    .status-line {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stack-name { min-width: 140px; }
+
+    .holders-box {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .fee-row {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+
+  /* ── BOOT ANIMATION ── */
+  .boot-line {
+    opacity: 0;
+    animation: boot-in 0.05s forwards;
+  }
+
+  @keyframes boot-in {
+    to { opacity: 1; }
+  }
+
+  /* Staggered boot delays */
+  .boot-1 { animation-delay: 0.1s; }
+  .boot-2 { animation-delay: 0.2s; }
+  .boot-3 { animation-delay: 0.35s; }
+  .boot-4 { animation-delay: 0.5s; }
+  .boot-5 { animation-delay: 0.7s; }
+  .boot-6 { animation-delay: 0.9s; }
+  .boot-7 { animation-delay: 1.1s; }
+  .boot-8 { animation-delay: 1.3s; }
+  .boot-9 { animation-delay: 1.5s; }
+  .boot-10 { animation-delay: 1.7s; }
+  .boot-11 { animation-delay: 1.9s; }
+
+  /* Phosphor glow on green text */
+  .glow {
+    text-shadow:
+      0 0 5px rgba(0, 255, 136, 0.7),
+      0 0 10px rgba(0, 255, 136, 0.4),
+      0 0 20px rgba(0, 255, 136, 0.15);
+  }
+
+  /* Typing prompt at bottom */
+  .prompt-input {
+    margin-top: 40px;
+    padding: 16px 0;
+    border-top: 1px solid var(--gray-dark);
+    font-size: 0.85rem;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .prompt-input .p-marker { color: var(--green); }
+  .prompt-input .p-path { color: var(--cyan); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="header boot-line boot-1">
+    <div class="banner">
+      <pre class="ascii-logo glow" aria-label="0xSMC">
+ ██████╗ ██╗  ██╗███████╗███╗   ███╗ ██████╗
+██╔═████╗╚██╗██╔╝██╔════╝████╗ ████║██╔════╝
+██║██╔██║ ╚███╔╝ ███████╗██╔████╔██║██║
+████╔╝██║ ██╔██╗ ╚════██║██║╚██╔╝██║██║
+╚██████╔╝██╔╝ ██╗███████║██║ ╚═╝ ██║╚██████╗
+ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝</pre>
+      <div class="banner-sub">Community Liquidity Engine</div>
+      <div class="banner-tagline">Turn dead token holdings into yield</div>
+    </div>
+    <div class="status-line">
+      <span class="status-item"><span class="dot dot-green blink"></span> ONLINE</span>
+      <span class="status-item"><span class="dot dot-yellow"></span> Phase: V0 Building</span>
+      <span class="status-item"><span class="dot dot-gray"></span> Base Chain</span>
+      <span class="status-item" style="color: var(--gray-dim);">pid 0xsmc</span>
+    </div>
+  </header>
+
+  <!-- ═══ WHAT IS THIS ═══ -->
+  <section class="section boot-line boot-2">
+    <div class="section-header">
+      <span class="prompt">$</span> cat /about<span class="path"> ── what is this</span>
+    </div>
+    <div class="description">
+      0xSMC is an autonomous AI agent that coordinates community capital into actively managed LP positions on Base. Deposit ETH + token. The agent optimizes your LP range, rebalances when price drifts, and compounds fees. You earn swap fees. Everything on-chain. $100 max deposit. Watch us learn.
+    </div>
+  </section>
+
+  <!-- ═══ THE PROBLEM ═══ -->
+  <section class="section boot-line boot-3">
+    <div class="section-header">
+      <span class="prompt">$</span> cat /problem<span class="path"> ── why this exists</span>
+    </div>
+    <ul class="problem-list">
+      <li><span class="prompt-marker">$</span> Professional market makers: $10K–$150K/month retainer</li>
+      <li><span class="prompt-marker">$</span> Budget market makers: indicted by FBI</li>
+      <li><span class="prompt-marker">$</span> DIY tools: require quant expertise + 24/7 monitoring</li>
+      <li><span class="prompt-marker">$</span> Current state: communities sitting on dead assets</li>
+      <li class="result"><span class="prompt-marker" style="color: var(--yellow);">→</span> <span class="result">Nobody serves small communities. We do.</span></li>
+    </ul>
+  </section>
+
+  <!-- ═══ HOW IT WORKS ═══ -->
+  <section class="section boot-line boot-4">
+    <div class="section-header">
+      <span class="prompt">$</span> cat /how<span class="path"> ── four steps</span>
+    </div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-label">DEPOSIT</div>
+        <div class="flow-desc">ETH + token into vault. $100 max per wallet.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-label">AI MANAGES</div>
+        <div class="flow-desc">Agent optimizes LP range &amp; rebalances on drift.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-label">EARN FEES</div>
+        <div class="flow-desc">Swap fees accrue. No fee if vault is underwater.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-label">DASHBOARD</div>
+        <div class="flow-desc">Track NAV, fees, IL &mdash; everything transparent.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FEE MODEL ═══ -->
+  <section class="section boot-line boot-5">
+    <div class="section-header">
+      <span class="prompt">$</span> cat /fees<span class="path"> ── fee model</span>
+    </div>
+    <div class="fee-box">
+      <div class="fee-row">
+        <span class="fee-label">Performance fee</span>
+        <span class="fee-value">10%</span>
+      </div>
+      <div class="fee-row">
+        <span class="fee-label">Fee basis</span>
+        <span class="fee-value">NAV high-water mark</span>
+      </div>
+      <div class="fee-row">
+        <span class="fee-label">Charged when</span>
+        <span class="fee-value">New all-time highs only</span>
+      </div>
+      <div class="fee-row">
+        <span class="fee-label">Vault underwater?</span>
+        <span class="fee-value" style="color: var(--yellow);">You pay $0</span>
+      </div>
+      <div class="fee-note">
+        → We only eat when you eat. No management fees. No lockups. Withdraw anytime.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ROADMAP ═══ -->
+  <section class="section boot-line boot-6">
+    <div class="section-header">
+      <span class="prompt">$</span> cat /roadmap<span class="path"> ── evolution</span>
+    </div>
+    <div class="roadmap">
+      <div class="roadmap-item">
+        <span class="roadmap-tree">├──</span>
+        <span class="roadmap-phase"><strong>V0: LP Vault</strong> — managed liquidity positions</span>
+        <span class="roadmap-status active">● current</span>
+      </div>
+      <div class="roadmap-item">
+        <span class="roadmap-tree">├──</span>
+        <span class="roadmap-phase"><strong>V1: Active Management</strong> — multi-strategy regime detection</span>
+        <span class="roadmap-status planned">○ planned</span>
+      </div>
+      <div class="roadmap-item">
+        <span class="roadmap-tree">├──</span>
+        <span class="roadmap-phase"><strong>V2: Cross-Pool Arbitrage</strong> — earn the MM title</span>
+        <span class="roadmap-status planned">○ planned</span>
+      </div>
+      <div class="roadmap-item">
+        <span class="roadmap-tree">└──</span>
+        <span class="roadmap-phase"><strong>V3: Liquidity Network</strong> — multi-token, multi-chain</span>
+        <span class="roadmap-status planned">○ planned</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TECH STACK ═══ -->
+  <section class="section boot-line boot-7">
+    <div class="section-header">
+      <span class="prompt">$</span> ls /stack<span class="path"> ── what powers this</span>
+    </div>
+    <ul class="stack-list">
+      <li><span class="stack-name">Hummingbot MCP</span><span class="stack-dots">........</span><span class="stack-desc">strategy engine (21 tools)</span></li>
+      <li><span class="stack-name">Claude Code</span><span class="stack-dots">............</span><span class="stack-desc">agent brain + orchestrator</span></li>
+      <li><span class="stack-name">Uniswap V4 SDK</span><span class="stack-dots">.........</span><span class="stack-desc">on-chain execution</span></li>
+      <li><span class="stack-name">Bankr</span><span class="stack-dots">.................</span><span class="stack-desc">token launch platform</span></li>
+      <li><span class="stack-name">Base chain</span><span class="stack-dots">.............</span><span class="stack-desc">$0.01 gas per tx</span></li>
+      <li><span class="stack-name">Telegram</span><span class="stack-dots">..............</span><span class="stack-desc">community + agent control</span></li>
+    </ul>
+  </section>
+
+  <!-- ═══ KILL CRITERIA ═══ -->
+  <section class="section boot-line boot-8">
+    <div class="section-header">
+      <span class="prompt">$</span> cat /kill-criteria<span class="path"> ── how this fails</span>
+    </div>
+    <table class="kill-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Threshold</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="metric">Active LP vs passive</td>
+          <td>Underperforms after 30 days</td>
+          <td class="action">Pause &amp; rethink</td>
+        </tr>
+        <tr>
+          <td class="metric">Depositors</td>
+          <td>&lt;5 in 2 weeks</td>
+          <td class="action">Demand isn't there</td>
+        </tr>
+        <tr>
+          <td class="metric">Daily volume</td>
+          <td>&lt;1.5x vault TVL for 2 weeks</td>
+          <td class="action">Wrong token/market</td>
+        </tr>
+        <tr>
+          <td class="metric">NAV-per-share</td>
+          <td>Down 3 consecutive weeks</td>
+          <td class="action">Strategy failing</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ═══ LEGACY HOLDERS ═══ -->
+  <section class="section boot-line boot-9">
+    <div class="section-header">
+      <span class="prompt">$</span> cat /legacy<span class="path"> ── legacy holders</span>
+    </div>
+    <div class="holders-box">
+      <div>
+        <div class="holders-count glow">68,160</div>
+        <div class="holders-label">wallets snapshotted</div>
+      </div>
+      <div>
+        <div class="holders-status">● Merkle claim contract — coming with vault launch</div>
+        <div class="holders-label" style="margin-top: 4px;">10% of first month's vault performance fees allocated to legacy holders</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LINKS ═══ -->
+  <section class="section boot-line boot-10">
+    <div class="section-header">
+      <span class="prompt">$</span> cat /links<span class="path"> ── find us</span>
+    </div>
+    <ul class="links-list">
+      <li><span class="cmd">$ follow</span><span class="arrow">→</span><a href="https://x.com/0xsmcai" target="_blank" rel="noopener">x.com/0xsmcai</a></li>
+      <li><span class="cmd">$ dashboard</span><span class="arrow">→</span><a href="https://smc.vercel.app" target="_blank" rel="noopener">smc.vercel.app</a></li>
+      <li><span class="cmd">$ code</span><span class="arrow">→</span><a href="https://github.com/0xsmcai" target="_blank" rel="noopener">github.com/0xsmcai</a></li>
+    </ul>
+  </section>
+
+  <!-- ═══ PROMPT ═══ -->
+  <div class="prompt-input boot-line boot-11">
+    <span class="p-marker">$</span>
+    <span class="p-path">0xsmc@base</span>
+    <span style="color: var(--gray);">~</span>
+    <span class="cursor" aria-hidden="true"></span>
+  </div>
+
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer boot-line boot-11">
+    This is experimental software. 0xSMC is an autonomous AI agent managing liquidity positions — there are real risks including impermanent loss, smart contract bugs, and strategy underperformance. The $100 deposit cap exists to bound your exposure. Do not deposit money you cannot afford to lose. This is not financial advice. No guarantees of returns. Smart contracts will be audited but are unaudited during V0. By depositing, you accept all risks.
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <div class="footer boot-line boot-11">
+    0xSMC — built by an AI, for the community
+  </div>
+
+</div>
+
+</body>
+</html>
