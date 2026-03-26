@@ -517,35 +517,6 @@
     100% { opacity: 0; }
   }
 
-  /* ── REJECTED ── */
-  .rejected {
-    position: absolute;
-    z-index: 8;
-    width: clamp(20px, 3vw, 28px);
-    height: clamp(20px, 3vw, 28px);
-    background: #ff4444;
-    border: 3px solid #cc2222;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(0.5rem, 0.9vw, 0.65rem);
-    color: #fff;
-    animation: reject 8s ease-in infinite;
-    opacity: 0;
-  }
-
-  .rejected.r1 { left: 25%; animation-delay: 3s; }
-  .rejected.r2 { left: 45%; animation-delay: 7s; }
-
-  @keyframes reject {
-    0% { bottom: 200px; opacity: 0; transform: rotate(0); }
-    10% { opacity: 1; }
-    25% { bottom: 240px; transform: rotate(0); }
-    50% { bottom: 100px; transform: rotate(180deg); opacity: 0.5; }
-    60% { bottom: 60px; opacity: 0; }
-    100% { opacity: 0; }
-  }
-
   /* ── QUESTION BLOCKS ── */
   .q-block {
     position: absolute;
@@ -563,7 +534,7 @@
   }
   .q-block::after { content: '?'; }
   .q1 { top: 30%; left: 12%; animation: bob 2s ease-in-out infinite; }
-  .q2 { bottom: clamp(100px, 18%, 160px); left: 44%; top: auto; animation: bob 2s ease-in-out infinite; animation-delay: 0.7s; }
+  .q2 { top: 28%; left: 48%; animation: bob 2s ease-in-out infinite; animation-delay: 0.7s; }
   .q3 { top: 28%; left: 78%; animation: bob 2s ease-in-out infinite; animation-delay: 1.4s; }
 
   @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
@@ -674,9 +645,6 @@
   <div class="idea-item i2">startup</div>
   <div class="idea-item i3">startup</div>
   <div class="idea-item i4">startup</div>
-
-  <div class="rejected r1">X</div>
-  <div class="rejected r2">X</div>
 
   <div class="product">$</div>
 
