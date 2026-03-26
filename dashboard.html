@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0xSMC Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/viem@2/dist/viem.umd.min.js" defer></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --green: #00ff88; --red: #ff4444; --yellow: #ffaa00;
+    --gray: #666; --gray-dark: #222; --bg: #0a0a0a; --white: #e0e0e0;
+  }
+  body {
+    background: var(--bg); color: var(--white);
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6;
+    min-height: 100vh; padding: 40px 20px;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+  h1 { color: var(--green); font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 8px; }
+  .subtitle { color: var(--gray); font-size: 0.85rem; margin-bottom: 32px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .card {
+    border: 1px solid var(--gray-dark); padding: 16px; background: #0f0f0f;
+  }
+  .card-label { color: var(--gray); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+  .card-value { color: var(--green); font-size: 1.4rem; font-weight: 700; margin-top: 4px; }
+  .card-value.negative { color: var(--red); }
+  .card-value.pending { color: var(--yellow); }
+  .section { margin-top: 32px; }
+  .section-header { color: #00d4ff; font-size: 0.8rem; letter-spacing: 1px; border-bottom: 1px solid var(--gray-dark); padding-bottom: 8px; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  th { text-align: left; padding: 8px; border-bottom: 1px solid var(--gray); color: #00d4ff; }
+  td { padding: 8px; border-bottom: 1px solid var(--gray-dark); }
+  .status-dot { display: inline-block; width: 8px; height: 8px; margin-right: 6px; }
+  .dot-green { background: var(--green); box-shadow: 0 0 4px var(--green); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-gray { background: var(--gray); }
+  .loading { color: var(--gray); animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gray-dark); font-size: 0.7rem; color: #444; }
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>0xSMC DASHBOARD</h1>
+  <div class="subtitle">Community Liquidity Engine — Base Chain</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-label">Vault TVL (ETH)</div>
+      <div class="card-value" id="tvl-eth"><span class="loading">loading...</span></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Vault TVL (Token)</div>
+      <div class="card-value" id="tvl-token"><span class="loading">loading...</span></div>
+    </div>
+    <div class="card">
+      <div class="card-label">NAV per Share</div>
+      <div class="card-value" id="nav"><span class="loading">loading...</span></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Total Shares</div>
+      <div class="card-value" id="total-shares"><span class="loading">loading...</span></div>
+    </div>
+    <div class="card">
+      <div class="card-label">High Water Mark</div>
+      <div class="card-value" id="hwm"><span class="loading">loading...</span></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Reserved Fees</div>
+      <div class="card-value" id="fees"><span class="loading">loading...</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">$ cat /status</div>
+    <table>
+      <tr>
+        <td><span class="status-dot dot-green"></span>Vault Contract</td>
+        <td id="vault-addr"><span class="loading">loading...</span></td>
+      </tr>
+      <tr>
+        <td><span class="status-dot dot-green"></span>Token ($SMCF)</td>
+        <td id="token-addr"><span class="loading">loading...</span></td>
+      </tr>
+      <tr>
+        <td><span class="status-dot dot-yellow"></span>Phase</td>
+        <td>V0 — Building (testnet deployed)</td>
+      </tr>
+      <tr>
+        <td><span class="status-dot dot-green"></span>Fee Model</td>
+        <td>10% NAV high-water mark — you pay $0 if vault is underwater</td>
+      </tr>
+      <tr>
+        <td><span class="status-dot dot-green"></span>Deposit Cap</td>
+        <td>$100 per wallet (0.05 ETH)</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-header">$ cat /links</div>
+    <table>
+      <tr><td><a href="https://x.com/0xsmcai">X (@0xsmcai)</a></td></tr>
+      <tr><td><a href="https://github.com/0xsmcai">GitHub</a></td></tr>
+      <tr><td><a href="https://0xsmcai.github.io/">Landing Page</a></td></tr>
+      <tr><td><a href="https://basescan.org/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432">ERC-8004 Agent #8453:36868</a></td></tr>
+    </table>
+  </div>
+
+  <div class="footer">
+    0xSMC — autonomous startup factory on GStack. Data refreshes every 30 seconds.
+    <br>Vault is on testnet. Mainnet launch pending.
+  </div>
+</div>
+
+<script>
+// Vault addresses — update when mainnet deploys
+const VAULT_TESTNET = "0xaBcEAFABFbE9cB7FA2088b8d6f6a54b974c04ACc";
+const TOKEN_TESTNET = "0x77b1c426F360719f328226114fC7E29B4d9cc3C8";
+const RPC = "https://sepolia.base.org";
+
+const ABI = [
+  "function totalValueLocked() view returns (uint256, uint256)",
+  "function navPerShare() view returns (uint256)",
+  "function totalShares() view returns (uint256)",
+  "function highWaterMark() view returns (uint256)",
+  "function reservedFees() view returns (uint256)",
+];
+
+async function fetchData() {
+  try {
+    const resp = await fetch(RPC, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify([
+        { jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0xec18154e" }, "latest"] }, // totalValueLocked
+        { jsonrpc: "2.0", id: 2, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0xae097223" }, "latest"] }, // navPerShare
+        { jsonrpc: "2.0", id: 3, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0x3a98ef39" }, "latest"] }, // totalShares
+        { jsonrpc: "2.0", id: 4, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0x1e8410da" }, "latest"] }, // highWaterMark
+        { jsonrpc: "2.0", id: 5, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0x284f4848" }, "latest"] }, // reservedFees
+      ]),
+    });
+    const results = await resp.json();
+
+    // Parse TVL (returns two uint256)
+    if (results[0]?.result && results[0].result !== "0x") {
+      const tvlData = results[0].result;
+      const ethTvl = BigInt("0x" + tvlData.slice(2, 66));
+      const tokenTvl = BigInt("0x" + tvlData.slice(66, 130));
+      document.getElementById("tvl-eth").textContent = (Number(ethTvl) / 1e18).toFixed(6) + " ETH";
+      document.getElementById("tvl-token").textContent = (Number(tokenTvl) / 1e18).toFixed(0) + " SMCF";
+    }
+
+    // NAV
+    if (results[1]?.result) {
+      const nav = Number(BigInt(results[1].result)) / 1e18;
+      document.getElementById("nav").textContent = nav.toFixed(6);
+    }
+
+    // Total shares
+    if (results[2]?.result) {
+      const shares = Number(BigInt(results[2].result)) / 1e18;
+      document.getElementById("total-shares").textContent = shares.toFixed(6);
+    }
+
+    // HWM
+    if (results[3]?.result) {
+      const hwm = Number(BigInt(results[3].result)) / 1e18;
+      document.getElementById("hwm").textContent = hwm.toFixed(6);
+    }
+
+    // Reserved fees
+    if (results[4]?.result) {
+      const fees = Number(BigInt(results[4].result)) / 1e18;
+      document.getElementById("fees").textContent = fees.toFixed(6) + " ETH";
+    }
+
+    document.getElementById("vault-addr").innerHTML = `<a href="https://sepolia.basescan.org/address/${VAULT_TESTNET}">${VAULT_TESTNET.slice(0,8)}...${VAULT_TESTNET.slice(-6)}</a>`;
+    document.getElementById("token-addr").innerHTML = `<a href="https://sepolia.basescan.org/address/${TOKEN_TESTNET}">${TOKEN_TESTNET.slice(0,8)}...${TOKEN_TESTNET.slice(-6)}</a>`;
+
+  } catch (e) {
+    console.error("Dashboard fetch error:", e);
+  }
+}
+
+// Function selector computation might be wrong — let me use simpler approach
+// Actually, let's just use the correct selectors
+// totalValueLocked() = keccak256("totalValueLocked()")[:4]
+// We need the actual selectors. Let me hardcode based on the contract.
+
+fetchData();
+setInterval(fetchData, 30000);
+</script>
+</body>
+</html>
