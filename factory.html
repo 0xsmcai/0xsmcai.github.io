@@ -400,21 +400,21 @@
 
   @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
-  /* ── GSTACK FORGE LABEL ── */
+  /* ── GSTACK FORGE LABEL (on ground/orange area) ── */
   .forge-label {
     position: absolute;
-    top: 44%;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
-    font-size: clamp(0.6rem, 1.6vw, 1.1rem);
-    color: #fff;
-    text-shadow: 2px 2px 0 #006800;
-    background: rgba(0, 168, 0, 0.9);
+    font-size: clamp(0.7rem, 1.8vw, 1.2rem);
+    color: #e09040;
+    text-shadow: none;
+    background: transparent;
     padding: 8px clamp(12px, 2vw, 20px);
-    border: 3px solid #006800;
+    border: 3px solid #e09040;
     white-space: nowrap;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
   }
 
   /* ── RED CARPET ── */
