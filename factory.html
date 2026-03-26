@@ -4,719 +4,500 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SMC Factory — Autonomous Startup Factory</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  :root {
-    --green: #00ff88;
-    --red: #ff4444;
-    --yellow: #ffaa00;
-    --blue: #4488ff;
-    --purple: #aa44ff;
-    --bg: #1a1a2e;
-    --ground: #2a2a3e;
-    --factory-wall: #3a3a4e;
-    --factory-dark: #2e2e42;
-    --sky: #0f0f23;
-    --pixel: 4px;
-  }
-
-  html { font-size: 10px; }
-
   body {
-    background: var(--sky);
     font-family: 'Press Start 2P', monospace;
     overflow-x: hidden;
+    background: #5c94fc;
     min-height: 100vh;
-    color: #ccc;
   }
 
-  /* ── TOP BAR ── */
-  .topbar {
-    background: #000;
-    border-bottom: 4px solid #333;
-    padding: 16px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
+  /* ── SKY with clouds (Mario style) ── */
+  .sky {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 700px;
+    background: linear-gradient(180deg, #5c94fc 0%, #88b4fc 60%, #a4d4fc 100%);
+    overflow: hidden;
   }
 
-  .topbar-title {
-    font-size: 1.6rem;
-    color: var(--green);
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  /* Clouds */
+  .cloud {
+    position: absolute;
+    background: #fff;
+    border-radius: 0;
+    opacity: 0.9;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+  }
+  .cloud-1 { width: 80px; height: 32px; top: 8%; left: 10%; animation: drift 30s linear infinite; }
+  .cloud-1::before { width: 40px; height: 24px; top: -16px; left: 12px; }
+  .cloud-1::after { width: 32px; height: 20px; top: -12px; left: 40px; }
+  .cloud-2 { width: 64px; height: 28px; top: 12%; left: 55%; animation: drift 35s linear infinite; animation-delay: -10s; }
+  .cloud-2::before { width: 36px; height: 20px; top: -14px; left: 8px; }
+  .cloud-2::after { width: 28px; height: 16px; top: -10px; left: 30px; }
+  .cloud-3 { width: 72px; height: 28px; top: 6%; left: 80%; animation: drift 25s linear infinite; animation-delay: -5s; }
+  .cloud-3::before { width: 38px; height: 22px; top: -14px; left: 10px; }
+  .cloud-3::after { width: 30px; height: 18px; top: -12px; left: 36px; }
+
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-120vw); } }
+
+  /* ── TITLE ── */
+  .title-block {
+    position: absolute;
+    top: 4%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+  }
+
+  .title {
+    font-size: clamp(1rem, 3vw, 2rem);
+    color: #fff;
+    text-shadow: 3px 3px 0 #333, -1px -1px 0 #333;
     letter-spacing: 4px;
   }
 
-  .topbar-status {
-    font-size: 0.8rem;
-    color: #666;
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
+  .subtitle {
+    font-size: clamp(0.5rem, 1.2vw, 0.7rem);
+    color: #ffd700;
+    text-shadow: 2px 2px 0 #333;
+    margin-top: 8px;
+    letter-spacing: 2px;
   }
 
-  .topbar-status .dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background: var(--green);
-    box-shadow: 0 0 4px var(--green);
-    margin-right: 6px;
-    animation: blink 2s step-end infinite;
-  }
-
-  @keyframes blink { 50% { opacity: 0.3; } }
-
-  /* ── SCENE ── */
-  .scene {
-    position: relative;
-    width: 100%;
-    height: 600px;
-    overflow: hidden;
-    background: linear-gradient(180deg, var(--sky) 0%, #16162b 60%, var(--ground) 100%);
-  }
-
-  /* Stars */
-  .stars {
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 200px;
-  }
-  .star {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: #fff;
-    animation: twinkle 3s ease-in-out infinite;
-  }
-  @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-
-  /* Ground */
+  /* ── GROUND ── */
   .ground {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 80px;
-    background: var(--ground);
-    border-top: 4px solid #444;
+    height: 120px;
+    background: #c84c0c;
+    border-top: 8px solid #e09040;
   }
-
   .ground::before {
     content: '';
     position: absolute;
-    top: -4px;
+    top: -8px;
     width: 100%;
-    height: 4px;
-    background: repeating-linear-gradient(90deg, #555 0px, #555 8px, #444 8px, #444 16px);
+    height: 8px;
+    background: repeating-linear-gradient(90deg, #e09040 0px, #e09040 32px, #c84c0c 32px, #c84c0c 64px);
   }
 
-  /* ── CONVEYOR BELT ── */
-  .conveyor {
+  .grass {
     position: absolute;
-    bottom: 80px;
-    left: 0;
+    bottom: 120px;
     width: 100%;
-    height: 20px;
-    background: #555;
-    border-top: 4px solid #777;
-    border-bottom: 4px solid #333;
-    overflow: hidden;
+    height: 24px;
+    background: #00a800;
+    border-top: 4px solid #30d030;
   }
 
-  .conveyor-track {
+  /* ── HILLS ── */
+  .hill {
     position: absolute;
-    top: 4px;
-    left: 0;
-    width: 200%;
-    height: 12px;
-    background: repeating-linear-gradient(90deg, #666 0px, #666 20px, #555 20px, #555 40px);
-    animation: convey 2s linear infinite;
+    bottom: 144px;
+    border-radius: 50% 50% 0 0;
+    background: #30a030;
   }
+  .hill-1 { width: 200px; height: 80px; left: 5%; }
+  .hill-2 { width: 140px; height: 56px; left: 70%; }
+  .hill-3 { width: 100px; height: 40px; left: 42%; }
 
-  @keyframes convey { to { transform: translateX(-50%); } }
-
-  /* ── INTAKE ZONE (left) ── */
-  .intake {
+  /* ── PIPES (Mario green pipes = GStack stages) ── */
+  .pipe {
     position: absolute;
-    left: 2%;
-    bottom: 100px;
-    width: 22%;
-    text-align: center;
+    bottom: 144px;
+    z-index: 5;
   }
 
-  .intake-label {
-    font-size: 0.7rem;
-    color: var(--yellow);
-    margin-bottom: 12px;
-    letter-spacing: 2px;
+  .pipe-body {
+    width: 48px;
+    height: 80px;
+    background: #00a800;
+    border: 4px solid #006800;
+    margin: 0 auto;
   }
 
-  .idea {
-    position: absolute;
+  .pipe-top {
     width: 60px;
-    height: 48px;
-    border: 3px solid;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.5rem;
-    font-family: 'Press Start 2P', monospace;
-    animation: drop-idea 8s linear infinite;
-    opacity: 0;
+    height: 20px;
+    background: #00c800;
+    border: 4px solid #006800;
+    margin: 0 auto;
   }
 
-  .idea-1 { border-color: var(--blue); color: var(--blue); left: 5%; animation-delay: 0s; background: rgba(68,136,255,0.1); }
-  .idea-2 { border-color: var(--purple); color: var(--purple); left: 35%; animation-delay: 2.5s; background: rgba(170,68,255,0.1); }
-  .idea-3 { border-color: var(--yellow); color: var(--yellow); left: 65%; animation-delay: 5s; background: rgba(255,170,0,0.1); }
-
-  @keyframes drop-idea {
-    0% { top: -60px; opacity: 0; }
-    10% { top: -60px; opacity: 1; }
-    40% { top: 80px; opacity: 1; }
-    60% { top: 80px; opacity: 1; transform: translateX(80px); }
-    90% { top: 80px; opacity: 0.5; transform: translateX(200px); }
-    100% { top: 80px; opacity: 0; transform: translateX(300px); }
+  .pipe-label {
+    text-align: center;
+    font-size: clamp(0.35rem, 0.8vw, 0.5rem);
+    color: #fff;
+    text-shadow: 1px 1px 0 #333;
+    margin-top: 4px;
+    line-height: 1.4;
+    white-space: nowrap;
   }
 
-  /* Source icons */
-  .source-icons {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    margin-bottom: 16px;
+  .pipe:nth-child(1) { left: 8%; }
+  .pipe:nth-child(2) { left: 24%; }
+  .pipe:nth-child(3) { left: 40%; }
+  .pipe:nth-child(4) { left: 56%; }
+
+  /* ── CASTLE (VIP Lounge) ── */
+  .castle {
+    position: absolute;
+    right: 4%;
+    bottom: 144px;
+    z-index: 5;
   }
 
-  .source-icon {
-    width: 24px;
+  .castle-body {
+    width: 100px;
+    height: 100px;
+    background: #e0a060;
+    border: 4px solid #c08040;
+    position: relative;
+  }
+
+  .castle-door {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 36px;
+    background: #333;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .castle-tower {
+    position: absolute;
+    top: -40px;
+    width: 32px;
+    height: 40px;
+    background: #e0a060;
+    border: 4px solid #c08040;
+  }
+  .castle-tower-l { left: -4px; }
+  .castle-tower-r { right: -4px; }
+
+  .castle-flag {
+    position: absolute;
+    top: -56px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
     height: 24px;
-    border: 2px solid #555;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #333;
+  }
+  .castle-flag::after {
+    content: '▸';
+    position: absolute;
+    top: 0;
+    left: 4px;
+    color: #ff4444;
     font-size: 1rem;
-    color: #888;
+    font-family: sans-serif;
   }
 
-  /* ── FACTORY (center) ── */
-  .factory {
-    position: absolute;
-    left: 26%;
-    bottom: 80px;
-    width: 48%;
-    height: 420px;
+  .castle-label {
+    text-align: center;
+    font-size: clamp(0.35rem, 0.7vw, 0.45rem);
+    color: #fff;
+    text-shadow: 1px 1px 0 #333;
+    margin-top: 4px;
+    line-height: 1.6;
   }
 
-  .factory-building {
-    position: absolute;
-    bottom: 20px;
-    left: 5%;
-    width: 90%;
-    height: 360px;
-    background: var(--factory-wall);
-    border: 4px solid #555;
-  }
-
-  .factory-roof {
-    position: absolute;
-    bottom: 380px;
-    left: 3%;
-    width: 94%;
-    height: 24px;
-    background: #555;
-    border: 4px solid #666;
-  }
-
-  .factory-sign {
+  .castle-vc {
     position: absolute;
     top: 12px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 1.2rem;
-    color: var(--green);
-    text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
-    white-space: nowrap;
-    letter-spacing: 3px;
-  }
-
-  .gstack-badge {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.6rem;
-    color: var(--yellow);
-    border: 2px solid var(--yellow);
-    padding: 4px 10px;
-    letter-spacing: 2px;
-  }
-
-  /* Chimneys */
-  .chimney {
-    position: absolute;
-    bottom: 380px;
-    width: 32px;
-    height: 60px;
-    background: #555;
-    border: 3px solid #666;
-  }
-  .chimney-1 { left: 20%; }
-  .chimney-2 { left: 70%; }
-
-  .smoke {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 16px;
-    height: 16px;
-    background: rgba(150, 150, 150, 0.4);
-    border-radius: 0;
-    animation: smoke-rise 3s ease-out infinite;
-  }
-
-  .smoke:nth-child(2) { animation-delay: 1s; left: 30%; }
-  .smoke:nth-child(3) { animation-delay: 2s; left: 70%; }
-
-  @keyframes smoke-rise {
-    0% { opacity: 0.6; transform: translateX(-50%) translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(-80px) scale(2.5); }
-  }
-
-  /* Factory floors */
-  .floor {
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    height: 80px;
-    border: 2px solid #444;
-    background: var(--factory-dark);
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    gap: 8px;
-  }
-
-  .floor-1 { bottom: 8px; }
-  .floor-2 { bottom: 96px; }
-  .floor-3 { bottom: 184px; }
-
-  .floor-label {
-    font-size: 0.55rem;
-    color: var(--green);
-    min-width: 100px;
-    line-height: 1.4;
-  }
-
-  .floor-icon {
-    font-size: 2rem;
-    min-width: 40px;
+    font-size: 0.35rem;
+    color: #ffd700;
+    text-shadow: 1px 1px 0 #333;
     text-align: center;
+    line-height: 2;
+    white-space: nowrap;
   }
 
-  .floor-pipe {
+  /* ── STARTUP IDEAS (items falling into pipes) ── */
+  .idea-item {
     position: absolute;
-    right: 12px;
-    width: 4px;
-    height: 20px;
-    background: var(--green);
-    animation: pipe-pulse 1.5s ease-in-out infinite;
-  }
-  .floor-pipe.up { top: -2px; }
-  .floor-pipe.down { bottom: -2px; }
-
-  @keyframes pipe-pulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; box-shadow: 0 0 6px var(--green); }
-  }
-
-  /* Reject chute */
-  .reject-chute {
-    position: absolute;
-    bottom: 20px;
-    left: -20px;
-    width: 30px;
-    height: 40px;
-  }
-
-  .reject-item {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: var(--red);
-    border: 2px solid #cc3333;
-    opacity: 0;
-    animation: reject-fall 6s ease-in infinite;
-    font-size: 0.4rem;
+    z-index: 8;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.35rem;
     color: #fff;
-    font-family: 'Press Start 2P', monospace;
+    text-shadow: 1px 1px 0 #000;
+    text-align: center;
+    line-height: 1.3;
+    border: 3px solid;
+    animation: idea-to-pipe 6s ease-in infinite;
+    opacity: 0;
   }
 
-  .reject-item:nth-child(2) { animation-delay: 3s; }
+  .idea-item.i1 { left: 9%; background: rgba(92,148,252,0.9); border-color: #4488ff; animation-delay: 0s; }
+  .idea-item.i2 { left: 25%; background: rgba(170,68,255,0.9); border-color: #aa44ff; animation-delay: 1.5s; }
+  .idea-item.i3 { left: 41%; background: rgba(255,170,0,0.9); border-color: #ffaa00; animation-delay: 3s; }
+  .idea-item.i4 { left: 57%; background: rgba(0,200,100,0.9); border-color: #00c864; animation-delay: 4.5s; }
 
-  @keyframes reject-fall {
-    0% { top: -20px; left: 0; opacity: 0; transform: rotate(0deg); }
-    10% { opacity: 1; }
-    30% { top: 60px; left: -30px; transform: rotate(90deg); }
-    50% { top: 120px; left: -20px; opacity: 0.5; transform: rotate(180deg); }
-    60% { opacity: 0; }
+  @keyframes idea-to-pipe {
+    0% { top: 15%; opacity: 0; }
+    15% { top: 15%; opacity: 1; }
+    60% { top: calc(100% - 280px); opacity: 1; }
+    75% { top: calc(100% - 240px); opacity: 0.6; }
+    85% { top: calc(100% - 200px); opacity: 0; }
     100% { opacity: 0; }
   }
 
-  /* Trash bin */
-  .trash {
+  /* ── PRODUCT (exits last pipe, walks to castle) ── */
+  .product {
     position: absolute;
-    bottom: 0;
-    left: -8%;
-    width: 48px;
-    height: 40px;
-    background: #333;
-    border: 3px solid #555;
-    border-top: 4px solid #666;
+    bottom: 148px;
+    z-index: 8;
+    width: 28px;
+    height: 28px;
+    background: #ffd700;
+    border: 3px solid #cc9900;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 0.8rem;
+    animation: product-walk 8s linear infinite;
+    opacity: 0;
   }
 
-  /* ── LOUNGE (right) ── */
-  .lounge {
+  @keyframes product-walk {
+    0% { left: 58%; opacity: 0; }
+    10% { left: 58%; opacity: 1; }
+    80% { left: calc(100% - 8% - 50px); opacity: 1; }
+    90% { left: calc(100% - 8% - 50px); opacity: 0.5; }
+    100% { opacity: 0; }
+  }
+
+  /* ── REJECTED (falls off screen) ── */
+  .rejected {
     position: absolute;
-    right: 1%;
-    bottom: 80px;
-    width: 23%;
-  }
-
-  .lounge-building {
-    position: relative;
-    width: 100%;
-    height: 240px;
-    background: linear-gradient(180deg, #2a1a3e 0%, #1e1430 100%);
-    border: 3px solid #6644aa;
-    padding: 12px;
-    overflow: hidden;
-  }
-
-  .lounge-label {
-    font-size: 0.6rem;
-    color: #cc88ff;
-    text-align: center;
-    margin-bottom: 8px;
-    letter-spacing: 2px;
-  }
-
-  .velvet-rope {
-    width: 100%;
-    height: 4px;
-    background: #cc4444;
-    margin-bottom: 12px;
-    box-shadow: 0 0 6px rgba(204, 68, 68, 0.5);
-  }
-
-  .vc-row {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 4px;
-  }
-
-  .vc {
+    bottom: 160px;
+    z-index: 8;
+    width: 24px;
+    height: 24px;
+    background: #ff4444;
+    border: 3px solid #cc2222;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid #444;
-  }
-
-  .vc-logo {
+    justify-content: center;
     font-size: 0.5rem;
-    color: var(--yellow);
-    min-width: 60px;
-    font-family: 'Press Start 2P', monospace;
-  }
-
-  .vc-couch {
-    font-size: 1rem;
-  }
-
-  /* Money particles */
-  .money {
-    position: absolute;
-    font-size: 0.8rem;
+    color: #fff;
+    animation: rejected-fall 7s ease-in infinite;
     opacity: 0;
-    animation: money-float 5s ease-out infinite;
-  }
-  .money-1 { right: 20%; bottom: 200px; animation-delay: 0s; }
-  .money-2 { right: 10%; bottom: 180px; animation-delay: 1.5s; }
-  .money-3 { right: 30%; bottom: 220px; animation-delay: 3s; }
-
-  @keyframes money-float {
-    0% { opacity: 0; transform: translateY(0); }
-    20% { opacity: 0.8; }
-    100% { opacity: 0; transform: translateY(-60px) translateX(10px); }
   }
 
-  /* Product exit */
-  .product-exit {
+  .rejected.r1 { left: 18%; animation-delay: 2s; }
+  .rejected.r2 { left: 34%; animation-delay: 5s; }
+
+  @keyframes rejected-fall {
+    0% { opacity: 0; transform: translateY(0) rotate(0); }
+    10% { opacity: 1; }
+    30% { transform: translateY(-40px) rotate(0); opacity: 1; }
+    60% { transform: translateY(100px) rotate(180deg); opacity: 0.5; }
+    70% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* ── QUESTION BLOCKS ── */
+  .q-block {
     position: absolute;
-    right: 24%;
-    bottom: 100px;
     width: 32px;
     height: 32px;
-    background: var(--green);
-    border: 3px solid #00cc66;
-    box-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
-    animation: product-glow 2s ease-in-out infinite, product-move 10s linear infinite;
+    background: #e09040;
+    border: 3px solid #c87020;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 0.8rem;
+    color: #fff;
+    text-shadow: 1px 1px 0 #333;
+    z-index: 3;
   }
+  .q-block::after { content: '?'; }
+  .q1 { top: 28%; left: 15%; animation: block-bob 2s ease-in-out infinite; }
+  .q2 { top: 32%; left: 48%; animation: block-bob 2s ease-in-out infinite; animation-delay: 0.7s; }
+  .q3 { top: 26%; left: 75%; animation: block-bob 2s ease-in-out infinite; animation-delay: 1.4s; }
 
-  @keyframes product-glow {
-    0%, 100% { box-shadow: 0 0 8px rgba(0, 255, 136, 0.3); }
-    50% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.7); }
-  }
+  @keyframes block-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
-  @keyframes product-move {
-    0% { right: 24%; opacity: 0; }
-    10% { right: 24%; opacity: 1; }
-    80% { right: 6%; opacity: 1; }
-    90% { right: 4%; opacity: 0.5; }
-    100% { right: 2%; opacity: 0; }
-  }
-
-  /* ── RED CARPET ── */
-  .red-carpet {
+  /* ── COIN COUNTER ── */
+  .coin-counter {
     position: absolute;
-    bottom: 80px;
-    right: 0;
-    width: 25%;
-    height: 20px;
-    background: #881122;
-    border-top: 3px solid #aa2244;
+    top: 20%;
+    right: 6%;
+    z-index: 10;
+    text-align: right;
   }
 
-  /* ── BOTTOM INFO ── */
-  .info-bar {
+  .coin-counter div {
+    font-size: clamp(0.4rem, 0.9vw, 0.6rem);
+    color: #fff;
+    text-shadow: 2px 2px 0 #333;
+    line-height: 2;
+  }
+
+  .coin-counter .label { color: #ffd700; }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
     background: #000;
-    border-top: 4px solid #333;
-    padding: 20px 24px;
+    border-top: 4px solid #444;
+    padding: 16px 24px;
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: clamp(16px, 3vw, 40px);
     flex-wrap: wrap;
   }
 
-  .info-item {
-    text-align: center;
+  .bottom-bar a {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(0.45rem, 0.9vw, 0.6rem);
+    color: #00ff88;
+    text-decoration: none;
+    text-shadow: 1px 1px 0 #003300;
+  }
+  .bottom-bar a:hover { color: #fff; }
+
+  /* ── FACTORY LABEL (floating above pipes) ── */
+  .factory-label {
+    position: absolute;
+    top: 38%;
+    left: 32%;
+    z-index: 10;
+    font-size: clamp(0.6rem, 1.5vw, 1rem);
+    color: #fff;
+    text-shadow: 2px 2px 0 #006800, -1px -1px 0 #006800;
+    letter-spacing: 3px;
+    background: rgba(0, 168, 0, 0.85);
+    padding: 6px 16px;
+    border: 3px solid #006800;
   }
 
-  .info-label {
-    font-size: 0.6rem;
-    color: #555;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-
-  .info-value {
-    font-size: 0.8rem;
-    color: var(--green);
-  }
-
-  .info-value a { color: var(--green); text-decoration: none; }
-  .info-value a:hover { text-decoration: underline; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 800px) {
-    .scene { height: 500px; }
-    .factory-building { height: 280px; }
-    .floor { height: 60px; }
-    .floor-label { font-size: 0.45rem; min-width: 70px; }
-    .floor-icon { font-size: 1.4rem; }
-    .lounge-building { height: 180px; }
-    .topbar-title { font-size: 1.2rem; }
-    .idea { width: 44px; height: 36px; font-size: 0.35rem; }
-  }
-
-  @media (max-width: 500px) {
-    .scene { height: 400px; }
-    .lounge { display: none; }
-    .red-carpet { display: none; }
-    .factory { left: 30%; width: 65%; }
-    .intake { width: 28%; }
+  /* ── NO COLLAPSE ON MOBILE ── */
+  @media (max-width: 600px) {
+    .sky { min-height: 600px; }
+    .pipe-body { width: 36px; height: 60px; }
+    .pipe-top { width: 48px; height: 16px; }
+    .castle-body { width: 72px; height: 72px; }
+    .castle-tower { width: 24px; height: 30px; top: -30px; }
+    .idea-item { width: 28px; height: 28px; font-size: 0.25rem; }
+    .factory-label { font-size: 0.55rem; left: 20%; }
   }
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <div class="topbar-title">SMC FACTORY</div>
-  <div class="topbar-status">
-    <span><span class="dot"></span> ONLINE</span>
-    <span>Products: 1</span>
-    <span>Killed: 1</span>
-    <span>Skills: 20+</span>
-  </div>
-</div>
+<div class="sky">
+  <!-- Clouds -->
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
 
-<!-- SCENE -->
-<div class="scene">
-
-  <!-- Stars -->
-  <div class="stars">
-    <div class="star" style="top:12%;left:8%;animation-delay:0.5s"></div>
-    <div class="star" style="top:25%;left:22%;animation-delay:1.2s"></div>
-    <div class="star" style="top:8%;left:45%;animation-delay:0.8s"></div>
-    <div class="star" style="top:18%;left:67%;animation-delay:2s"></div>
-    <div class="star" style="top:5%;left:85%;animation-delay:0.3s"></div>
-    <div class="star" style="top:30%;left:92%;animation-delay:1.7s"></div>
-    <div class="star" style="top:15%;left:35%;animation-delay:2.5s"></div>
-    <div class="star" style="top:22%;left:55%;animation-delay:1s"></div>
+  <!-- Title -->
+  <div class="title-block">
+    <div class="title">SMC FACTORY</div>
+    <div class="subtitle">AUTONOMOUS STARTUP FACTORY</div>
   </div>
 
-  <!-- Conveyor belt -->
-  <div class="conveyor">
-    <div class="conveyor-track"></div>
+  <!-- Question blocks -->
+  <div class="q-block q1"></div>
+  <div class="q-block q2"></div>
+  <div class="q-block q3"></div>
+
+  <!-- Coin counter -->
+  <div class="coin-counter">
+    <div class="label">$SMCF</div>
+    <div>PRODUCTS × 1</div>
+    <div>KILLED × 1</div>
+    <div>SKILLS × 20</div>
   </div>
 
-  <!-- INTAKE ZONE -->
-  <div class="intake">
-    <div class="intake-label">INTAKE</div>
-    <div class="source-icons">
-      <div class="source-icon">𝕏</div>
-      <div class="source-icon">💬</div>
-      <div class="source-icon">🌐</div>
-    </div>
-    <div style="position:relative;height:200px;">
-      <div class="idea idea-1">DeFi<br>App</div>
-      <div class="idea idea-2">AI<br>Tool</div>
-      <div class="idea idea-3">NFT<br>Game</div>
-    </div>
+  <!-- Factory label -->
+  <div class="factory-label">⚙ GSTACK FORGE ⚙</div>
+
+  <!-- Startup ideas falling into pipes -->
+  <div class="idea-item i1">DeFi</div>
+  <div class="idea-item i2">AI</div>
+  <div class="idea-item i3">NFT</div>
+  <div class="idea-item i4">LP</div>
+
+  <!-- Rejected items -->
+  <div class="rejected r1">✗</div>
+  <div class="rejected r2">✗</div>
+
+  <!-- Product walking to castle -->
+  <div class="product">💰</div>
+
+  <!-- Green pipes (GStack stages) -->
+  <div class="pipe" style="left:8%">
+    <div class="pipe-top"></div>
+    <div class="pipe-body"></div>
+    <div class="pipe-label">/office<br>hours</div>
+  </div>
+  <div class="pipe" style="left:24%">
+    <div class="pipe-top"></div>
+    <div class="pipe-body"></div>
+    <div class="pipe-label">/ceo<br>review</div>
+  </div>
+  <div class="pipe" style="left:40%">
+    <div class="pipe-top"></div>
+    <div class="pipe-body"></div>
+    <div class="pipe-label">/eng<br>review</div>
+  </div>
+  <div class="pipe" style="left:56%">
+    <div class="pipe-top"></div>
+    <div class="pipe-body"></div>
+    <div class="pipe-label">/ship</div>
   </div>
 
-  <!-- FACTORY -->
-  <div class="factory">
-    <!-- Chimneys -->
-    <div class="chimney chimney-1">
-      <div class="smoke"></div>
-      <div class="smoke"></div>
-      <div class="smoke"></div>
+  <!-- Castle (VIP Lounge) -->
+  <div class="castle">
+    <div class="castle-flag"></div>
+    <div class="castle-tower castle-tower-l"></div>
+    <div class="castle-tower castle-tower-r"></div>
+    <div class="castle-body">
+      <div class="castle-door"></div>
+      <div class="castle-vc">YC<br>a16z<br>CB</div>
     </div>
-    <div class="chimney chimney-2">
-      <div class="smoke"></div>
-      <div class="smoke"></div>
-    </div>
-
-    <!-- Roof -->
-    <div class="factory-roof"></div>
-
-    <!-- Building -->
-    <div class="factory-building">
-      <div class="factory-sign">GSTACK FORGE</div>
-      <div class="gstack-badge">POWERED BY GSTACK</div>
-
-      <!-- Floor 3: Eng Review -->
-      <div class="floor floor-3">
-        <div class="floor-icon">⚙️</div>
-        <div class="floor-label">/eng-review<br><span style="color:#888;font-size:0.45rem">architecture</span></div>
-        <div class="floor-pipe down"></div>
-      </div>
-
-      <!-- Floor 2: CEO Review -->
-      <div class="floor floor-2">
-        <div class="floor-icon">🔍</div>
-        <div class="floor-label">/ceo-review<br><span style="color:#888;font-size:0.45rem">scope check</span></div>
-        <div class="floor-pipe up"></div>
-        <div class="floor-pipe down"></div>
-      </div>
-
-      <!-- Floor 1: Office Hours -->
-      <div class="floor floor-1">
-        <div class="floor-icon">💡</div>
-        <div class="floor-label">/office-hours<br><span style="color:#888;font-size:0.45rem">validation</span></div>
-        <div class="floor-pipe up"></div>
-      </div>
-
-      <!-- Reject chute -->
-      <div class="reject-chute">
-        <div class="reject-item">✗</div>
-        <div class="reject-item">✗</div>
-      </div>
-    </div>
-
-    <!-- Trash -->
-    <div class="trash">🗑️</div>
+    <div class="castle-label">VIP<br>LOUNGE</div>
   </div>
 
-  <!-- Product exiting factory -->
-  <div class="product-exit">💰</div>
+  <!-- Hills -->
+  <div class="hill hill-1"></div>
+  <div class="hill hill-2"></div>
+  <div class="hill hill-3"></div>
 
-  <!-- Red carpet to lounge -->
-  <div class="red-carpet"></div>
-
-  <!-- Money particles -->
-  <div class="money money-1">💵</div>
-  <div class="money money-2">💰</div>
-  <div class="money money-3">💵</div>
-
-  <!-- LOUNGE -->
-  <div class="lounge">
-    <div class="lounge-building">
-      <div class="lounge-label">VIP LOUNGE</div>
-      <div class="velvet-rope"></div>
-      <div class="vc-row">
-        <div class="vc">
-          <div class="vc-couch">🛋️</div>
-          <div class="vc-logo">YC</div>
-        </div>
-        <div class="vc">
-          <div class="vc-couch">🛋️</div>
-          <div class="vc-logo">a16z</div>
-        </div>
-        <div class="vc">
-          <div class="vc-couch">🛋️</div>
-          <div class="vc-logo">CB Vent</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Ground -->
+  <!-- Grass + Ground -->
+  <div class="grass"></div>
   <div class="ground"></div>
-
 </div>
 
-<!-- INFO BAR -->
-<div class="info-bar">
-  <div class="info-item">
-    <div class="info-label">TOKEN</div>
-    <div class="info-value">$SMCF</div>
-  </div>
-  <div class="info-item">
-    <div class="info-label">CHAIN</div>
-    <div class="info-value">Base</div>
-  </div>
-  <div class="info-item">
-    <div class="info-label">IDENTITY</div>
-    <div class="info-value">ERC-8004 #36868</div>
-  </div>
-  <div class="info-item">
-    <div class="info-label">FOLLOW</div>
-    <div class="info-value"><a href="https://x.com/0xsmcai" target="_blank">@0xsmcai</a></div>
-  </div>
-  <div class="info-item">
-    <div class="info-label">CODE</div>
-    <div class="info-value"><a href="https://github.com/0xsmcai" target="_blank">GitHub</a></div>
-  </div>
+<!-- Bottom links -->
+<div class="bottom-bar">
+  <a href="https://x.com/0xsmcai" target="_blank">@0xsmcai</a>
+  <a href="https://github.com/0xsmcai" target="_blank">GitHub</a>
+  <a href="https://0xsmcai.github.io/" target="_blank">Home</a>
+  <a href="https://github.com/0xsmcai/factory-public" target="_blank">Factory Docs</a>
 </div>
 
 </body>
