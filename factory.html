@@ -15,13 +15,13 @@
     min-height: 100vh;
   }
 
-  /* ── SKY with clouds (Mario style) ── */
+  /* ── SKY ── */
   .sky {
     position: relative;
     width: 100%;
     height: 100vh;
-    min-height: 700px;
-    background: linear-gradient(180deg, #5c94fc 0%, #88b4fc 60%, #a4d4fc 100%);
+    min-height: 640px;
+    background: linear-gradient(180deg, #5c94fc 0%, #88b4fc 50%, #a4d4fc 100%);
     overflow: hidden;
   }
 
@@ -29,49 +29,66 @@
   .cloud {
     position: absolute;
     background: #fff;
-    border-radius: 0;
-    opacity: 0.9;
   }
-  .cloud::before, .cloud::after {
-    content: '';
-    position: absolute;
-    background: #fff;
-  }
-  .cloud-1 { width: 80px; height: 32px; top: 8%; left: 10%; animation: drift 30s linear infinite; }
-  .cloud-1::before { width: 40px; height: 24px; top: -16px; left: 12px; }
-  .cloud-1::after { width: 32px; height: 20px; top: -12px; left: 40px; }
-  .cloud-2 { width: 64px; height: 28px; top: 12%; left: 55%; animation: drift 35s linear infinite; animation-delay: -10s; }
-  .cloud-2::before { width: 36px; height: 20px; top: -14px; left: 8px; }
-  .cloud-2::after { width: 28px; height: 16px; top: -10px; left: 30px; }
-  .cloud-3 { width: 72px; height: 28px; top: 6%; left: 80%; animation: drift 25s linear infinite; animation-delay: -5s; }
-  .cloud-3::before { width: 38px; height: 22px; top: -14px; left: 10px; }
-  .cloud-3::after { width: 30px; height: 18px; top: -12px; left: 36px; }
+  .cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; }
+  .cloud-1 { width: 80px; height: 28px; top: 6%; left: 10%; animation: drift 30s linear infinite; }
+  .cloud-1::before { width: 40px; height: 20px; top: -14px; left: 12px; }
+  .cloud-1::after { width: 28px; height: 16px; top: -10px; left: 40px; }
+  .cloud-2 { width: 60px; height: 24px; top: 10%; left: 60%; animation: drift 35s linear infinite; animation-delay: -10s; }
+  .cloud-2::before { width: 32px; height: 18px; top: -12px; left: 8px; }
+  .cloud-2::after { width: 24px; height: 14px; top: -8px; left: 28px; }
+  .cloud-3 { width: 70px; height: 26px; top: 4%; left: 85%; animation: drift 25s linear infinite; animation-delay: -5s; }
+  .cloud-3::before { width: 36px; height: 18px; top: -12px; left: 10px; }
+  .cloud-3::after { width: 28px; height: 14px; top: -10px; left: 34px; }
 
   @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-120vw); } }
 
   /* ── TITLE ── */
   .title-block {
     position: absolute;
-    top: 4%;
+    top: 3%;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
     z-index: 10;
+    width: 90%;
   }
 
   .title {
-    font-size: clamp(1rem, 3vw, 2rem);
+    font-size: clamp(1.2rem, 4vw, 2.4rem);
     color: #fff;
-    text-shadow: 3px 3px 0 #333, -1px -1px 0 #333;
+    text-shadow: 3px 3px 0 #222, -1px -1px 0 #222;
     letter-spacing: 4px;
   }
 
   .subtitle {
-    font-size: clamp(0.5rem, 1.2vw, 0.7rem);
+    font-size: clamp(0.5rem, 1.4vw, 0.8rem);
     color: #ffd700;
     text-shadow: 2px 2px 0 #333;
     margin-top: 8px;
     letter-spacing: 2px;
+  }
+
+  /* ── STATS (replaces coin counter — better for mobile) ── */
+  .stats {
+    position: absolute;
+    top: 14%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: clamp(8px, 3vw, 24px);
+    z-index: 10;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stat {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 6px 12px;
+    font-size: clamp(0.45rem, 1vw, 0.6rem);
+    color: #ffd700;
+    text-shadow: 1px 1px 0 #000;
+    white-space: nowrap;
   }
 
   /* ── GROUND ── */
@@ -79,7 +96,7 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 120px;
+    height: 80px;
     background: #c84c0c;
     border-top: 8px solid #e09040;
   }
@@ -94,9 +111,9 @@
 
   .grass {
     position: absolute;
-    bottom: 120px;
+    bottom: 80px;
     width: 100%;
-    height: 24px;
+    height: 20px;
     background: #00a800;
     border-top: 4px solid #30d030;
   }
@@ -104,65 +121,74 @@
   /* ── HILLS ── */
   .hill {
     position: absolute;
-    bottom: 144px;
+    bottom: 100px;
     border-radius: 50% 50% 0 0;
     background: #30a030;
   }
-  .hill-1 { width: 200px; height: 80px; left: 5%; }
-  .hill-2 { width: 140px; height: 56px; left: 70%; }
-  .hill-3 { width: 100px; height: 40px; left: 42%; }
+  .hill-1 { width: clamp(100px, 20vw, 200px); height: clamp(40px, 8vw, 80px); left: 3%; }
+  .hill-2 { width: clamp(80px, 14vw, 140px); height: clamp(32px, 6vw, 56px); left: 68%; }
 
-  /* ── PIPES (Mario green pipes = GStack stages) ── */
-  .pipe {
+  /* ── PIPE GROUP (GStack stages) ── */
+  .pipe-group {
     position: absolute;
-    bottom: 144px;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: clamp(16px, 4vw, 48px);
     z-index: 5;
+    align-items: flex-end;
   }
 
-  .pipe-body {
-    width: 48px;
-    height: 80px;
-    background: #00a800;
-    border: 4px solid #006800;
-    margin: 0 auto;
+  .pipe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .pipe-top {
-    width: 60px;
-    height: 20px;
+    width: clamp(40px, 7vw, 60px);
+    height: clamp(14px, 2vw, 20px);
     background: #00c800;
-    border: 4px solid #006800;
-    margin: 0 auto;
+    border: 3px solid #006800;
+  }
+
+  .pipe-body {
+    width: clamp(32px, 5.5vw, 48px);
+    height: clamp(48px, 8vw, 80px);
+    background: #00a800;
+    border: 3px solid #006800;
+    border-top: none;
   }
 
   .pipe-label {
     text-align: center;
-    font-size: clamp(0.35rem, 0.8vw, 0.5rem);
+    font-size: clamp(0.4rem, 1vw, 0.55rem);
     color: #fff;
     text-shadow: 1px 1px 0 #333;
-    margin-top: 4px;
-    line-height: 1.4;
-    white-space: nowrap;
+    margin-top: 6px;
+    line-height: 1.6;
   }
 
-  .pipe:nth-child(1) { left: 8%; }
-  .pipe:nth-child(2) { left: 24%; }
-  .pipe:nth-child(3) { left: 40%; }
-  .pipe:nth-child(4) { left: 56%; }
+  /* Variable pipe heights for visual interest */
+  .pipe:nth-child(1) .pipe-body { height: clamp(48px, 8vw, 80px); }
+  .pipe:nth-child(2) .pipe-body { height: clamp(64px, 10vw, 100px); }
+  .pipe:nth-child(3) .pipe-body { height: clamp(56px, 9vw, 90px); }
+  .pipe:nth-child(4) .pipe-body { height: clamp(72px, 11vw, 110px); }
 
-  /* ── CASTLE (VIP Lounge) ── */
+  /* ── CASTLE ── */
   .castle {
     position: absolute;
-    right: 4%;
-    bottom: 144px;
+    right: clamp(8px, 3vw, 40px);
+    bottom: 100px;
     z-index: 5;
   }
 
   .castle-body {
-    width: 100px;
-    height: 100px;
+    width: clamp(64px, 10vw, 100px);
+    height: clamp(64px, 10vw, 100px);
     background: #e0a060;
-    border: 4px solid #c08040;
+    border: 3px solid #c08040;
     position: relative;
   }
 
@@ -171,306 +197,304 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 28px;
-    height: 36px;
+    width: clamp(18px, 3vw, 28px);
+    height: clamp(24px, 4vw, 36px);
     background: #333;
-    border-radius: 14px 14px 0 0;
+    border-radius: 50% 50% 0 0;
   }
 
   .castle-tower {
     position: absolute;
-    top: -40px;
-    width: 32px;
-    height: 40px;
+    top: clamp(-24px, -3vw, -40px);
+    width: clamp(20px, 3vw, 32px);
+    height: clamp(24px, 3vw, 40px);
     background: #e0a060;
-    border: 4px solid #c08040;
+    border: 3px solid #c08040;
   }
-  .castle-tower-l { left: -4px; }
-  .castle-tower-r { right: -4px; }
+  .castle-tower-l { left: -2px; }
+  .castle-tower-r { right: -2px; }
 
   .castle-flag {
     position: absolute;
-    top: -56px;
+    top: clamp(-40px, -5vw, -60px);
     left: 50%;
     transform: translateX(-50%);
-    width: 4px;
-    height: 24px;
+    width: 3px;
+    height: clamp(16px, 2vw, 24px);
     background: #333;
   }
   .castle-flag::after {
-    content: '▸';
+    content: '';
     position: absolute;
     top: 0;
-    left: 4px;
-    color: #ff4444;
-    font-size: 1rem;
-    font-family: sans-serif;
+    left: 3px;
+    width: 12px;
+    height: 8px;
+    background: #ff4444;
   }
 
   .castle-label {
     text-align: center;
-    font-size: clamp(0.35rem, 0.7vw, 0.45rem);
+    font-size: clamp(0.4rem, 0.9vw, 0.55rem);
     color: #fff;
     text-shadow: 1px 1px 0 #333;
-    margin-top: 4px;
-    line-height: 1.6;
+    margin-top: 6px;
+    line-height: 1.8;
   }
 
   .castle-vc {
     position: absolute;
-    top: 12px;
+    top: 8px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.35rem;
+    font-size: clamp(0.35rem, 0.7vw, 0.45rem);
     color: #ffd700;
     text-shadow: 1px 1px 0 #333;
     text-align: center;
-    line-height: 2;
+    line-height: 2.2;
     white-space: nowrap;
   }
 
-  /* ── STARTUP IDEAS (items falling into pipes) ── */
+  /* ── IDEA ITEMS (falling into pipes) ── */
   .idea-item {
     position: absolute;
     z-index: 8;
-    width: 36px;
-    height: 36px;
+    width: clamp(32px, 5vw, 44px);
+    height: clamp(32px, 5vw, 44px);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.35rem;
+    font-size: clamp(0.4rem, 0.9vw, 0.5rem);
     color: #fff;
     text-shadow: 1px 1px 0 #000;
     text-align: center;
-    line-height: 1.3;
     border: 3px solid;
-    animation: idea-to-pipe 6s ease-in infinite;
+    animation: idea-drop 7s ease-in infinite;
     opacity: 0;
   }
 
-  .idea-item.i1 { left: 9%; background: rgba(92,148,252,0.9); border-color: #4488ff; animation-delay: 0s; }
-  .idea-item.i2 { left: 25%; background: rgba(170,68,255,0.9); border-color: #aa44ff; animation-delay: 1.5s; }
-  .idea-item.i3 { left: 41%; background: rgba(255,170,0,0.9); border-color: #ffaa00; animation-delay: 3s; }
-  .idea-item.i4 { left: 57%; background: rgba(0,200,100,0.9); border-color: #00c864; animation-delay: 4.5s; }
+  .idea-item.i1 { left: 18%; background: rgba(92,148,252,0.9); border-color: #4488ff; animation-delay: 0s; }
+  .idea-item.i2 { left: 34%; background: rgba(170,68,255,0.9); border-color: #aa44ff; animation-delay: 2s; }
+  .idea-item.i3 { left: 50%; background: rgba(255,170,0,0.9); border-color: #ffaa00; animation-delay: 4s; }
+  .idea-item.i4 { left: 64%; background: rgba(0,200,100,0.9); border-color: #00c864; animation-delay: 6s; }
 
-  @keyframes idea-to-pipe {
-    0% { top: 15%; opacity: 0; }
-    15% { top: 15%; opacity: 1; }
-    60% { top: calc(100% - 280px); opacity: 1; }
-    75% { top: calc(100% - 240px); opacity: 0.6; }
-    85% { top: calc(100% - 200px); opacity: 0; }
+  @keyframes idea-drop {
+    0% { top: 20%; opacity: 0; }
+    10% { top: 20%; opacity: 1; }
+    55% { top: calc(100% - 220px); opacity: 1; }
+    70% { top: calc(100% - 180px); opacity: 0.4; }
+    80% { opacity: 0; }
     100% { opacity: 0; }
   }
 
-  /* ── PRODUCT (exits last pipe, walks to castle) ── */
+  /* ── PRODUCT (walks to castle) ── */
   .product {
     position: absolute;
-    bottom: 148px;
+    bottom: 104px;
     z-index: 8;
-    width: 28px;
-    height: 28px;
+    width: clamp(24px, 3.5vw, 32px);
+    height: clamp(24px, 3.5vw, 32px);
     background: #ffd700;
     border: 3px solid #cc9900;
-    box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
-    animation: product-walk 8s linear infinite;
+    font-size: clamp(0.7rem, 1.2vw, 1rem);
+    animation: walk-to-castle 10s linear infinite;
     opacity: 0;
   }
 
-  @keyframes product-walk {
-    0% { left: 58%; opacity: 0; }
-    10% { left: 58%; opacity: 1; }
-    80% { left: calc(100% - 8% - 50px); opacity: 1; }
-    90% { left: calc(100% - 8% - 50px); opacity: 0.5; }
+  @keyframes walk-to-castle {
+    0% { right: 45%; opacity: 0; }
+    10% { right: 45%; opacity: 1; }
+    75% { right: clamp(80px, 14vw, 150px); opacity: 1; }
+    85% { right: clamp(70px, 12vw, 130px); opacity: 0.5; }
+    90% { opacity: 0; }
     100% { opacity: 0; }
   }
 
-  /* ── REJECTED (falls off screen) ── */
+  /* ── REJECTED ── */
   .rejected {
     position: absolute;
-    bottom: 160px;
     z-index: 8;
-    width: 24px;
-    height: 24px;
+    width: clamp(20px, 3vw, 28px);
+    height: clamp(20px, 3vw, 28px);
     background: #ff4444;
     border: 3px solid #cc2222;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.5rem;
+    font-size: clamp(0.4rem, 0.8vw, 0.6rem);
     color: #fff;
-    animation: rejected-fall 7s ease-in infinite;
+    animation: reject 8s ease-in infinite;
     opacity: 0;
   }
 
-  .rejected.r1 { left: 18%; animation-delay: 2s; }
-  .rejected.r2 { left: 34%; animation-delay: 5s; }
+  .rejected.r1 { left: 25%; animation-delay: 3s; }
+  .rejected.r2 { left: 45%; animation-delay: 7s; }
 
-  @keyframes rejected-fall {
-    0% { opacity: 0; transform: translateY(0) rotate(0); }
+  @keyframes reject {
+    0% { bottom: 200px; opacity: 0; transform: rotate(0); }
     10% { opacity: 1; }
-    30% { transform: translateY(-40px) rotate(0); opacity: 1; }
-    60% { transform: translateY(100px) rotate(180deg); opacity: 0.5; }
-    70% { opacity: 0; }
+    25% { bottom: 240px; transform: rotate(0); }
+    50% { bottom: 100px; transform: rotate(180deg); opacity: 0.5; }
+    60% { bottom: 60px; opacity: 0; }
     100% { opacity: 0; }
   }
 
   /* ── QUESTION BLOCKS ── */
   .q-block {
     position: absolute;
-    width: 32px;
-    height: 32px;
+    width: clamp(28px, 4vw, 36px);
+    height: clamp(28px, 4vw, 36px);
     background: #e09040;
     border: 3px solid #c87020;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
+    font-size: clamp(0.6rem, 1vw, 0.9rem);
     color: #fff;
     text-shadow: 1px 1px 0 #333;
     z-index: 3;
   }
   .q-block::after { content: '?'; }
-  .q1 { top: 28%; left: 15%; animation: block-bob 2s ease-in-out infinite; }
-  .q2 { top: 32%; left: 48%; animation: block-bob 2s ease-in-out infinite; animation-delay: 0.7s; }
-  .q3 { top: 26%; left: 75%; animation: block-bob 2s ease-in-out infinite; animation-delay: 1.4s; }
+  .q1 { top: 30%; left: 12%; animation: bob 2s ease-in-out infinite; }
+  .q2 { top: 34%; left: 44%; animation: bob 2s ease-in-out infinite; animation-delay: 0.7s; }
+  .q3 { top: 28%; left: 78%; animation: bob 2s ease-in-out infinite; animation-delay: 1.4s; }
 
-  @keyframes block-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
-  /* ── COIN COUNTER ── */
-  .coin-counter {
+  /* ── GSTACK FORGE LABEL ── */
+  .forge-label {
     position: absolute;
-    top: 20%;
-    right: 6%;
+    top: 44%;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 10;
-    text-align: right;
-  }
-
-  .coin-counter div {
-    font-size: clamp(0.4rem, 0.9vw, 0.6rem);
+    font-size: clamp(0.6rem, 1.6vw, 1.1rem);
     color: #fff;
-    text-shadow: 2px 2px 0 #333;
-    line-height: 2;
+    text-shadow: 2px 2px 0 #006800;
+    background: rgba(0, 168, 0, 0.9);
+    padding: 8px clamp(12px, 2vw, 20px);
+    border: 3px solid #006800;
+    white-space: nowrap;
+    letter-spacing: 2px;
   }
 
-  .coin-counter .label { color: #ffd700; }
+  /* ── RED CARPET ── */
+  .carpet {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: clamp(80px, 16vw, 200px);
+    height: 20px;
+    background: #881122;
+    border-top: 3px solid #bb2244;
+    z-index: 4;
+  }
+
+  /* ── MONEY PARTICLES ── */
+  .money {
+    position: absolute;
+    font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+    opacity: 0;
+    z-index: 6;
+    animation: float-money 5s ease-out infinite;
+  }
+  .money-1 { right: 10%; bottom: 240px; animation-delay: 0s; }
+  .money-2 { right: 16%; bottom: 200px; animation-delay: 2s; }
+  .money-3 { right: 6%; bottom: 260px; animation-delay: 3.5s; }
+
+  @keyframes float-money {
+    0% { opacity: 0; transform: translateY(0); }
+    20% { opacity: 0.8; }
+    100% { opacity: 0; transform: translateY(-50px) translateX(8px); }
+  }
 
   /* ── BOTTOM BAR ── */
   .bottom-bar {
     background: #000;
     border-top: 4px solid #444;
-    padding: 16px 24px;
+    padding: 16px 20px;
     display: flex;
     justify-content: center;
-    gap: clamp(16px, 3vw, 40px);
+    gap: clamp(12px, 3vw, 32px);
     flex-wrap: wrap;
   }
 
   .bottom-bar a {
     font-family: 'Press Start 2P', monospace;
-    font-size: clamp(0.45rem, 0.9vw, 0.6rem);
+    font-size: clamp(0.5rem, 1.1vw, 0.65rem);
     color: #00ff88;
     text-decoration: none;
     text-shadow: 1px 1px 0 #003300;
+    padding: 8px 4px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
   .bottom-bar a:hover { color: #fff; }
-
-  /* ── FACTORY LABEL (floating above pipes) ── */
-  .factory-label {
-    position: absolute;
-    top: 38%;
-    left: 32%;
-    z-index: 10;
-    font-size: clamp(0.6rem, 1.5vw, 1rem);
-    color: #fff;
-    text-shadow: 2px 2px 0 #006800, -1px -1px 0 #006800;
-    letter-spacing: 3px;
-    background: rgba(0, 168, 0, 0.85);
-    padding: 6px 16px;
-    border: 3px solid #006800;
-  }
-
-  /* ── NO COLLAPSE ON MOBILE ── */
-  @media (max-width: 600px) {
-    .sky { min-height: 600px; }
-    .pipe-body { width: 36px; height: 60px; }
-    .pipe-top { width: 48px; height: 16px; }
-    .castle-body { width: 72px; height: 72px; }
-    .castle-tower { width: 24px; height: 30px; top: -30px; }
-    .idea-item { width: 28px; height: 28px; font-size: 0.25rem; }
-    .factory-label { font-size: 0.55rem; left: 20%; }
-  }
 </style>
 </head>
 <body>
 
 <div class="sky">
-  <!-- Clouds -->
   <div class="cloud cloud-1"></div>
   <div class="cloud cloud-2"></div>
   <div class="cloud cloud-3"></div>
 
-  <!-- Title -->
   <div class="title-block">
     <div class="title">SMC FACTORY</div>
     <div class="subtitle">AUTONOMOUS STARTUP FACTORY</div>
   </div>
 
-  <!-- Question blocks -->
+  <div class="stats">
+    <div class="stat">$SMCF</div>
+    <div class="stat">SHIPPED: 1</div>
+    <div class="stat">KILLED: 1</div>
+    <div class="stat">SKILLS: 20+</div>
+  </div>
+
   <div class="q-block q1"></div>
   <div class="q-block q2"></div>
   <div class="q-block q3"></div>
 
-  <!-- Coin counter -->
-  <div class="coin-counter">
-    <div class="label">$SMCF</div>
-    <div>PRODUCTS × 1</div>
-    <div>KILLED × 1</div>
-    <div>SKILLS × 20</div>
-  </div>
+  <div class="forge-label">GSTACK FORGE</div>
 
-  <!-- Factory label -->
-  <div class="factory-label">⚙ GSTACK FORGE ⚙</div>
-
-  <!-- Startup ideas falling into pipes -->
   <div class="idea-item i1">DeFi</div>
   <div class="idea-item i2">AI</div>
   <div class="idea-item i3">NFT</div>
   <div class="idea-item i4">LP</div>
 
-  <!-- Rejected items -->
-  <div class="rejected r1">✗</div>
-  <div class="rejected r2">✗</div>
+  <div class="rejected r1">X</div>
+  <div class="rejected r2">X</div>
 
-  <!-- Product walking to castle -->
-  <div class="product">💰</div>
+  <div class="product">$</div>
 
-  <!-- Green pipes (GStack stages) -->
-  <div class="pipe" style="left:8%">
-    <div class="pipe-top"></div>
-    <div class="pipe-body"></div>
-    <div class="pipe-label">/office<br>hours</div>
-  </div>
-  <div class="pipe" style="left:24%">
-    <div class="pipe-top"></div>
-    <div class="pipe-body"></div>
-    <div class="pipe-label">/ceo<br>review</div>
-  </div>
-  <div class="pipe" style="left:40%">
-    <div class="pipe-top"></div>
-    <div class="pipe-body"></div>
-    <div class="pipe-label">/eng<br>review</div>
-  </div>
-  <div class="pipe" style="left:56%">
-    <div class="pipe-top"></div>
-    <div class="pipe-body"></div>
-    <div class="pipe-label">/ship</div>
+  <div class="pipe-group">
+    <div class="pipe">
+      <div class="pipe-top"></div>
+      <div class="pipe-body"></div>
+      <div class="pipe-label">/office<br>hours</div>
+    </div>
+    <div class="pipe">
+      <div class="pipe-top"></div>
+      <div class="pipe-body"></div>
+      <div class="pipe-label">/ceo<br>review</div>
+    </div>
+    <div class="pipe">
+      <div class="pipe-top"></div>
+      <div class="pipe-body"></div>
+      <div class="pipe-label">/eng<br>review</div>
+    </div>
+    <div class="pipe">
+      <div class="pipe-top"></div>
+      <div class="pipe-body"></div>
+      <div class="pipe-label">/ship</div>
+    </div>
   </div>
 
-  <!-- Castle (VIP Lounge) -->
   <div class="castle">
     <div class="castle-flag"></div>
     <div class="castle-tower castle-tower-l"></div>
@@ -482,22 +506,23 @@
     <div class="castle-label">VIP<br>LOUNGE</div>
   </div>
 
-  <!-- Hills -->
+  <div class="carpet"></div>
+
+  <div class="money money-1">$</div>
+  <div class="money money-2">$</div>
+  <div class="money money-3">$</div>
+
   <div class="hill hill-1"></div>
   <div class="hill hill-2"></div>
-  <div class="hill hill-3"></div>
-
-  <!-- Grass + Ground -->
   <div class="grass"></div>
   <div class="ground"></div>
 </div>
 
-<!-- Bottom links -->
 <div class="bottom-bar">
-  <a href="https://x.com/0xsmcai" target="_blank">@0xsmcai</a>
-  <a href="https://github.com/0xsmcai" target="_blank">GitHub</a>
-  <a href="https://0xsmcai.github.io/" target="_blank">Home</a>
-  <a href="https://github.com/0xsmcai/factory-public" target="_blank">Factory Docs</a>
+  <a href="https://x.com/0xsmcai">@0xsmcai</a>
+  <a href="https://github.com/0xsmcai">GitHub</a>
+  <a href="https://0xsmcai.github.io/">Home</a>
+  <a href="https://github.com/0xsmcai/factory-public">Docs</a>
 </div>
 
 </body>
