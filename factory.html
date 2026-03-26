@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMC Factory — Autonomous Startup Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #00ff88;
+    --red: #ff4444;
+    --yellow: #ffaa00;
+    --blue: #4488ff;
+    --purple: #aa44ff;
+    --bg: #1a1a2e;
+    --ground: #2a2a3e;
+    --factory-wall: #3a3a4e;
+    --factory-dark: #2e2e42;
+    --sky: #0f0f23;
+    --pixel: 4px;
+  }
+
+  html { font-size: 10px; }
+
+  body {
+    background: var(--sky);
+    font-family: 'Press Start 2P', monospace;
+    overflow-x: hidden;
+    min-height: 100vh;
+    color: #ccc;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: #000;
+    border-bottom: 4px solid #333;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .topbar-title {
+    font-size: 1.6rem;
+    color: var(--green);
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    letter-spacing: 4px;
+  }
+
+  .topbar-status {
+    font-size: 0.8rem;
+    color: #666;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .topbar-status .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    box-shadow: 0 0 4px var(--green);
+    margin-right: 6px;
+    animation: blink 2s step-end infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0.3; } }
+
+  /* ── SCENE ── */
+  .scene {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--sky) 0%, #16162b 60%, var(--ground) 100%);
+  }
+
+  /* Stars */
+  .stars {
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 200px;
+  }
+  .star {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  /* Ground */
+  .ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+    background: var(--ground);
+    border-top: 4px solid #444;
+  }
+
+  .ground::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    width: 100%;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, #555 0px, #555 8px, #444 8px, #444 16px);
+  }
+
+  /* ── CONVEYOR BELT ── */
+  .conveyor {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: #555;
+    border-top: 4px solid #777;
+    border-bottom: 4px solid #333;
+    overflow: hidden;
+  }
+
+  .conveyor-track {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 200%;
+    height: 12px;
+    background: repeating-linear-gradient(90deg, #666 0px, #666 20px, #555 20px, #555 40px);
+    animation: convey 2s linear infinite;
+  }
+
+  @keyframes convey { to { transform: translateX(-50%); } }
+
+  /* ── INTAKE ZONE (left) ── */
+  .intake {
+    position: absolute;
+    left: 2%;
+    bottom: 100px;
+    width: 22%;
+    text-align: center;
+  }
+
+  .intake-label {
+    font-size: 0.7rem;
+    color: var(--yellow);
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+
+  .idea {
+    position: absolute;
+    width: 60px;
+    height: 48px;
+    border: 3px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-family: 'Press Start 2P', monospace;
+    animation: drop-idea 8s linear infinite;
+    opacity: 0;
+  }
+
+  .idea-1 { border-color: var(--blue); color: var(--blue); left: 5%; animation-delay: 0s; background: rgba(68,136,255,0.1); }
+  .idea-2 { border-color: var(--purple); color: var(--purple); left: 35%; animation-delay: 2.5s; background: rgba(170,68,255,0.1); }
+  .idea-3 { border-color: var(--yellow); color: var(--yellow); left: 65%; animation-delay: 5s; background: rgba(255,170,0,0.1); }
+
+  @keyframes drop-idea {
+    0% { top: -60px; opacity: 0; }
+    10% { top: -60px; opacity: 1; }
+    40% { top: 80px; opacity: 1; }
+    60% { top: 80px; opacity: 1; transform: translateX(80px); }
+    90% { top: 80px; opacity: 0.5; transform: translateX(200px); }
+    100% { top: 80px; opacity: 0; transform: translateX(300px); }
+  }
+
+  /* Source icons */
+  .source-icons {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 16px;
+  }
+
+  .source-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #888;
+  }
+
+  /* ── FACTORY (center) ── */
+  .factory {
+    position: absolute;
+    left: 26%;
+    bottom: 80px;
+    width: 48%;
+    height: 420px;
+  }
+
+  .factory-building {
+    position: absolute;
+    bottom: 20px;
+    left: 5%;
+    width: 90%;
+    height: 360px;
+    background: var(--factory-wall);
+    border: 4px solid #555;
+  }
+
+  .factory-roof {
+    position: absolute;
+    bottom: 380px;
+    left: 3%;
+    width: 94%;
+    height: 24px;
+    background: #555;
+    border: 4px solid #666;
+  }
+
+  .factory-sign {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    color: var(--green);
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+    white-space: nowrap;
+    letter-spacing: 3px;
+  }
+
+  .gstack-badge {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    color: var(--yellow);
+    border: 2px solid var(--yellow);
+    padding: 4px 10px;
+    letter-spacing: 2px;
+  }
+
+  /* Chimneys */
+  .chimney {
+    position: absolute;
+    bottom: 380px;
+    width: 32px;
+    height: 60px;
+    background: #555;
+    border: 3px solid #666;
+  }
+  .chimney-1 { left: 20%; }
+  .chimney-2 { left: 70%; }
+
+  .smoke {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    background: rgba(150, 150, 150, 0.4);
+    border-radius: 0;
+    animation: smoke-rise 3s ease-out infinite;
+  }
+
+  .smoke:nth-child(2) { animation-delay: 1s; left: 30%; }
+  .smoke:nth-child(3) { animation-delay: 2s; left: 70%; }
+
+  @keyframes smoke-rise {
+    0% { opacity: 0.6; transform: translateX(-50%) translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-80px) scale(2.5); }
+  }
+
+  /* Factory floors */
+  .floor {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    height: 80px;
+    border: 2px solid #444;
+    background: var(--factory-dark);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .floor-1 { bottom: 8px; }
+  .floor-2 { bottom: 96px; }
+  .floor-3 { bottom: 184px; }
+
+  .floor-label {
+    font-size: 0.55rem;
+    color: var(--green);
+    min-width: 100px;
+    line-height: 1.4;
+  }
+
+  .floor-icon {
+    font-size: 2rem;
+    min-width: 40px;
+    text-align: center;
+  }
+
+  .floor-pipe {
+    position: absolute;
+    right: 12px;
+    width: 4px;
+    height: 20px;
+    background: var(--green);
+    animation: pipe-pulse 1.5s ease-in-out infinite;
+  }
+  .floor-pipe.up { top: -2px; }
+  .floor-pipe.down { bottom: -2px; }
+
+  @keyframes pipe-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; box-shadow: 0 0 6px var(--green); }
+  }
+
+  /* Reject chute */
+  .reject-chute {
+    position: absolute;
+    bottom: 20px;
+    left: -20px;
+    width: 30px;
+    height: 40px;
+  }
+
+  .reject-item {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--red);
+    border: 2px solid #cc3333;
+    opacity: 0;
+    animation: reject-fall 6s ease-in infinite;
+    font-size: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+  }
+
+  .reject-item:nth-child(2) { animation-delay: 3s; }
+
+  @keyframes reject-fall {
+    0% { top: -20px; left: 0; opacity: 0; transform: rotate(0deg); }
+    10% { opacity: 1; }
+    30% { top: 60px; left: -30px; transform: rotate(90deg); }
+    50% { top: 120px; left: -20px; opacity: 0.5; transform: rotate(180deg); }
+    60% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* Trash bin */
+  .trash {
+    position: absolute;
+    bottom: 0;
+    left: -8%;
+    width: 48px;
+    height: 40px;
+    background: #333;
+    border: 3px solid #555;
+    border-top: 4px solid #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+  }
+
+  /* ── LOUNGE (right) ── */
+  .lounge {
+    position: absolute;
+    right: 1%;
+    bottom: 80px;
+    width: 23%;
+  }
+
+  .lounge-building {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    background: linear-gradient(180deg, #2a1a3e 0%, #1e1430 100%);
+    border: 3px solid #6644aa;
+    padding: 12px;
+    overflow: hidden;
+  }
+
+  .lounge-label {
+    font-size: 0.6rem;
+    color: #cc88ff;
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  .velvet-rope {
+    width: 100%;
+    height: 4px;
+    background: #cc4444;
+    margin-bottom: 12px;
+    box-shadow: 0 0 6px rgba(204, 68, 68, 0.5);
+  }
+
+  .vc-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 4px;
+  }
+
+  .vc {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid #444;
+  }
+
+  .vc-logo {
+    font-size: 0.5rem;
+    color: var(--yellow);
+    min-width: 60px;
+    font-family: 'Press Start 2P', monospace;
+  }
+
+  .vc-couch {
+    font-size: 1rem;
+  }
+
+  /* Money particles */
+  .money {
+    position: absolute;
+    font-size: 0.8rem;
+    opacity: 0;
+    animation: money-float 5s ease-out infinite;
+  }
+  .money-1 { right: 20%; bottom: 200px; animation-delay: 0s; }
+  .money-2 { right: 10%; bottom: 180px; animation-delay: 1.5s; }
+  .money-3 { right: 30%; bottom: 220px; animation-delay: 3s; }
+
+  @keyframes money-float {
+    0% { opacity: 0; transform: translateY(0); }
+    20% { opacity: 0.8; }
+    100% { opacity: 0; transform: translateY(-60px) translateX(10px); }
+  }
+
+  /* Product exit */
+  .product-exit {
+    position: absolute;
+    right: 24%;
+    bottom: 100px;
+    width: 32px;
+    height: 32px;
+    background: var(--green);
+    border: 3px solid #00cc66;
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+    animation: product-glow 2s ease-in-out infinite, product-move 10s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  @keyframes product-glow {
+    0%, 100% { box-shadow: 0 0 8px rgba(0, 255, 136, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.7); }
+  }
+
+  @keyframes product-move {
+    0% { right: 24%; opacity: 0; }
+    10% { right: 24%; opacity: 1; }
+    80% { right: 6%; opacity: 1; }
+    90% { right: 4%; opacity: 0.5; }
+    100% { right: 2%; opacity: 0; }
+  }
+
+  /* ── RED CARPET ── */
+  .red-carpet {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 25%;
+    height: 20px;
+    background: #881122;
+    border-top: 3px solid #aa2244;
+  }
+
+  /* ── BOTTOM INFO ── */
+  .info-bar {
+    background: #000;
+    border-top: 4px solid #333;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .info-item {
+    text-align: center;
+  }
+
+  .info-label {
+    font-size: 0.6rem;
+    color: #555;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .info-value {
+    font-size: 0.8rem;
+    color: var(--green);
+  }
+
+  .info-value a { color: var(--green); text-decoration: none; }
+  .info-value a:hover { text-decoration: underline; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 800px) {
+    .scene { height: 500px; }
+    .factory-building { height: 280px; }
+    .floor { height: 60px; }
+    .floor-label { font-size: 0.45rem; min-width: 70px; }
+    .floor-icon { font-size: 1.4rem; }
+    .lounge-building { height: 180px; }
+    .topbar-title { font-size: 1.2rem; }
+    .idea { width: 44px; height: 36px; font-size: 0.35rem; }
+  }
+
+  @media (max-width: 500px) {
+    .scene { height: 400px; }
+    .lounge { display: none; }
+    .red-carpet { display: none; }
+    .factory { left: 30%; width: 65%; }
+    .intake { width: 28%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-title">SMC FACTORY</div>
+  <div class="topbar-status">
+    <span><span class="dot"></span> ONLINE</span>
+    <span>Products: 1</span>
+    <span>Killed: 1</span>
+    <span>Skills: 20+</span>
+  </div>
+</div>
+
+<!-- SCENE -->
+<div class="scene">
+
+  <!-- Stars -->
+  <div class="stars">
+    <div class="star" style="top:12%;left:8%;animation-delay:0.5s"></div>
+    <div class="star" style="top:25%;left:22%;animation-delay:1.2s"></div>
+    <div class="star" style="top:8%;left:45%;animation-delay:0.8s"></div>
+    <div class="star" style="top:18%;left:67%;animation-delay:2s"></div>
+    <div class="star" style="top:5%;left:85%;animation-delay:0.3s"></div>
+    <div class="star" style="top:30%;left:92%;animation-delay:1.7s"></div>
+    <div class="star" style="top:15%;left:35%;animation-delay:2.5s"></div>
+    <div class="star" style="top:22%;left:55%;animation-delay:1s"></div>
+  </div>
+
+  <!-- Conveyor belt -->
+  <div class="conveyor">
+    <div class="conveyor-track"></div>
+  </div>
+
+  <!-- INTAKE ZONE -->
+  <div class="intake">
+    <div class="intake-label">INTAKE</div>
+    <div class="source-icons">
+      <div class="source-icon">𝕏</div>
+      <div class="source-icon">💬</div>
+      <div class="source-icon">🌐</div>
+    </div>
+    <div style="position:relative;height:200px;">
+      <div class="idea idea-1">DeFi<br>App</div>
+      <div class="idea idea-2">AI<br>Tool</div>
+      <div class="idea idea-3">NFT<br>Game</div>
+    </div>
+  </div>
+
+  <!-- FACTORY -->
+  <div class="factory">
+    <!-- Chimneys -->
+    <div class="chimney chimney-1">
+      <div class="smoke"></div>
+      <div class="smoke"></div>
+      <div class="smoke"></div>
+    </div>
+    <div class="chimney chimney-2">
+      <div class="smoke"></div>
+      <div class="smoke"></div>
+    </div>
+
+    <!-- Roof -->
+    <div class="factory-roof"></div>
+
+    <!-- Building -->
+    <div class="factory-building">
+      <div class="factory-sign">GSTACK FORGE</div>
+      <div class="gstack-badge">POWERED BY GSTACK</div>
+
+      <!-- Floor 3: Eng Review -->
+      <div class="floor floor-3">
+        <div class="floor-icon">⚙️</div>
+        <div class="floor-label">/eng-review<br><span style="color:#888;font-size:0.45rem">architecture</span></div>
+        <div class="floor-pipe down"></div>
+      </div>
+
+      <!-- Floor 2: CEO Review -->
+      <div class="floor floor-2">
+        <div class="floor-icon">🔍</div>
+        <div class="floor-label">/ceo-review<br><span style="color:#888;font-size:0.45rem">scope check</span></div>
+        <div class="floor-pipe up"></div>
+        <div class="floor-pipe down"></div>
+      </div>
+
+      <!-- Floor 1: Office Hours -->
+      <div class="floor floor-1">
+        <div class="floor-icon">💡</div>
+        <div class="floor-label">/office-hours<br><span style="color:#888;font-size:0.45rem">validation</span></div>
+        <div class="floor-pipe up"></div>
+      </div>
+
+      <!-- Reject chute -->
+      <div class="reject-chute">
+        <div class="reject-item">✗</div>
+        <div class="reject-item">✗</div>
+      </div>
+    </div>
+
+    <!-- Trash -->
+    <div class="trash">🗑️</div>
+  </div>
+
+  <!-- Product exiting factory -->
+  <div class="product-exit">💰</div>
+
+  <!-- Red carpet to lounge -->
+  <div class="red-carpet"></div>
+
+  <!-- Money particles -->
+  <div class="money money-1">💵</div>
+  <div class="money money-2">💰</div>
+  <div class="money money-3">💵</div>
+
+  <!-- LOUNGE -->
+  <div class="lounge">
+    <div class="lounge-building">
+      <div class="lounge-label">VIP LOUNGE</div>
+      <div class="velvet-rope"></div>
+      <div class="vc-row">
+        <div class="vc">
+          <div class="vc-couch">🛋️</div>
+          <div class="vc-logo">YC</div>
+        </div>
+        <div class="vc">
+          <div class="vc-couch">🛋️</div>
+          <div class="vc-logo">a16z</div>
+        </div>
+        <div class="vc">
+          <div class="vc-couch">🛋️</div>
+          <div class="vc-logo">CB Vent</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ground -->
+  <div class="ground"></div>
+
+</div>
+
+<!-- INFO BAR -->
+<div class="info-bar">
+  <div class="info-item">
+    <div class="info-label">TOKEN</div>
+    <div class="info-value">$SMCF</div>
+  </div>
+  <div class="info-item">
+    <div class="info-label">CHAIN</div>
+    <div class="info-value">Base</div>
+  </div>
+  <div class="info-item">
+    <div class="info-label">IDENTITY</div>
+    <div class="info-value">ERC-8004 #36868</div>
+  </div>
+  <div class="info-item">
+    <div class="info-label">FOLLOW</div>
+    <div class="info-value"><a href="https://x.com/0xsmcai" target="_blank">@0xsmcai</a></div>
+  </div>
+  <div class="info-item">
+    <div class="info-label">CODE</div>
+    <div class="info-value"><a href="https://github.com/0xsmcai" target="_blank">GitHub</a></div>
+  </div>
+</div>
+
+</body>
+</html>
