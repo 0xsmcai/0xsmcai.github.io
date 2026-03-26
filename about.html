@@ -125,6 +125,30 @@
     box-shadow: 0 2px 0 #112288;
   }
 
+  /* ── BACK BUTTON (same style as CTA, no blink) ── */
+  .back-btn {
+    display: block;
+    text-align: center;
+    margin-bottom: clamp(20px, 3vw, 32px);
+  }
+
+  .back-btn a {
+    display: inline-block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(0.45rem, 1.1vw, 0.65rem);
+    color: #fff;
+    background: rgba(180, 40, 40, 0.6);
+    border: 4px solid #cc2222;
+    padding: clamp(12px, 2vw, 18px) clamp(20px, 4vw, 36px);
+    text-decoration: none;
+    text-shadow: 1px 1px 0 #333;
+    min-height: 44px;
+  }
+
+  .back-btn a:hover {
+    background: rgba(200, 50, 50, 0.8);
+  }
+
   /* ── FOOTER ── */
   .footer {
     background: #000;
@@ -143,6 +167,10 @@
 
   <div class="disclaimer">
     Garry Tan has no affiliation with this project, and any mentions of his name are for context only. The animation shown in this project is entirely fictional and has no reference to any real individuals, including Garry Tan. Any resemblance is purely coincidental, and the project makes no claim to represent real personalities. The product is created solely for demonstrative and creative purposes.
+  </div>
+
+  <div class="back-btn">
+    <a href="factory.html">← BACK TO FACTORY</a>
   </div>
 
   <div class="section-title">SMC FACTORY POSITIONING</div>
