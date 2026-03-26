@@ -103,6 +103,19 @@
     left: 50%;
   }
 
+  .garry-title {
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(0.35rem, 0.7vw, 0.45rem);
+    color: #333;
+    text-shadow: 1px 1px 0 #fff;
+    white-space: nowrap;
+    font-family: 'Press Start 2P', monospace;
+    z-index: 14;
+  }
+
   @keyframes cloud-shake {
     0%, 100% { transform: translateY(0) rotate(0deg); }
     25% { transform: translateY(-3px) rotate(0.5deg); }
@@ -554,7 +567,9 @@
 
   <div class="garry-cloud">
     <img src="garry.webp" alt="" class="garry-img">
-    <div class="garry-seat"></div>
+    <div class="garry-seat">
+      <span class="garry-title">GS God</span>
+    </div>
   </div>
 
   <div class="title-block">
