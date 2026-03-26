@@ -221,7 +221,7 @@
   /* ── CTA BUTTON ── */
   .cta {
     position: absolute;
-    bottom: clamp(100px, 18%, 160px);
+    top: 34%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -563,7 +563,7 @@
   }
   .q-block::after { content: '?'; }
   .q1 { top: 30%; left: 12%; animation: bob 2s ease-in-out infinite; }
-  .q2 { top: 34%; left: 44%; animation: bob 2s ease-in-out infinite; animation-delay: 0.7s; }
+  .q2 { bottom: clamp(100px, 18%, 160px); left: 44%; top: auto; animation: bob 2s ease-in-out infinite; animation-delay: 0.7s; }
   .q3 { top: 28%; left: 78%; animation: bob 2s ease-in-out infinite; animation-delay: 1.4s; }
 
   @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
