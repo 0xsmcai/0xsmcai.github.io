@@ -122,16 +122,18 @@
 
 <script>
 // Vault addresses — update when mainnet deploys
-const VAULT_TESTNET = "0xaBcEAFABFbE9cB7FA2088b8d6f6a54b974c04ACc";
-const TOKEN_TESTNET = "0x77b1c426F360719f328226114fC7E29B4d9cc3C8";
+const VAULT_TESTNET = "0x03bB8634e4b748A43049d3905B78A677d4fc5dB5";
+const TOKEN_TESTNET = "0xE970fF83f4123D75Da35d07683e0a1E8282432B9";
 const RPC = "https://sepolia.base.org";
 
 const ABI = [
-  "function totalValueLocked() view returns (uint256, uint256)",
+  "function totalAssets() view returns (uint256, uint256)",
   "function navPerShare() view returns (uint256)",
   "function totalShares() view returns (uint256)",
   "function highWaterMark() view returns (uint256)",
   "function reservedFees() view returns (uint256)",
+  "function moonwellWethValue() view returns (uint256)",
+  "function currentLendingRatio() view returns (uint256)",
 ];
 
 async function fetchData() {
@@ -140,11 +142,13 @@ async function fetchData() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify([
-        { jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0xec18154e" }, "latest"] }, // totalValueLocked
+        { jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0x01e1d114" }, "latest"] }, // totalAssets
         { jsonrpc: "2.0", id: 2, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0xae097223" }, "latest"] }, // navPerShare
         { jsonrpc: "2.0", id: 3, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0x3a98ef39" }, "latest"] }, // totalShares
         { jsonrpc: "2.0", id: 4, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0x1e8410da" }, "latest"] }, // highWaterMark
         { jsonrpc: "2.0", id: 5, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0x284f4848" }, "latest"] }, // reservedFees
+        { jsonrpc: "2.0", id: 6, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0x47f836e3" }, "latest"] }, // moonwellWethValue
+        { jsonrpc: "2.0", id: 7, method: "eth_call", params: [{ to: VAULT_TESTNET, data: "0x41e19c0d" }, "latest"] }, // currentLendingRatio
       ]),
     });
     const results = await resp.json();
