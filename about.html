@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMC Factory — About</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Press Start 2P', monospace;
+    background: linear-gradient(180deg, #5c94fc 0%, #88b4fc 50%, #a4d4fc 100%);
+    min-height: 100vh;
+    color: #222;
+  }
+
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: clamp(20px, 4vw, 40px) clamp(16px, 3vw, 32px);
+  }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    padding: clamp(12px, 2vw, 20px);
+    margin-bottom: clamp(24px, 4vw, 40px);
+    font-size: clamp(0.4rem, 0.8vw, 0.5rem);
+    color: #555;
+    line-height: 2;
+  }
+
+  /* ── POSITIONING ── */
+  .section-title {
+    font-size: clamp(0.7rem, 1.8vw, 1.1rem);
+    color: #fff;
+    text-shadow: 2px 2px 0 #333;
+    margin-bottom: clamp(20px, 3vw, 32px);
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  .manifesto {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 3vw, 24px);
+    margin-bottom: clamp(32px, 5vw, 48px);
+  }
+
+  .manifesto p {
+    font-size: clamp(0.5rem, 1.1vw, 0.7rem);
+    color: #fff;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+    line-height: 2.2;
+    background: rgba(0, 0, 0, 0.15);
+    padding: clamp(12px, 2vw, 20px);
+    border-left: 4px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .manifesto p.highlight {
+    font-size: clamp(0.6rem, 1.4vw, 0.85rem);
+    color: #ffd700;
+    text-shadow: 2px 2px 0 #333;
+    border-left-color: #ffd700;
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  /* ── BUTTONS ── */
+  .buttons {
+    display: flex;
+    gap: clamp(12px, 3vw, 24px);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: clamp(32px, 5vw, 48px);
+  }
+
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(0.5rem, 1.1vw, 0.7rem);
+    padding: clamp(12px, 2vw, 16px) clamp(20px, 4vw, 32px);
+    text-decoration: none;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
+    border: 4px solid;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .btn-red {
+    color: #fff;
+    background: rgba(180, 40, 40, 0.7);
+    border-color: #cc2222;
+    box-shadow: 0 4px 0 #881111;
+  }
+
+  .btn-red:hover {
+    background: rgba(200, 50, 50, 0.85);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #881111;
+  }
+
+  .btn-red:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #881111;
+  }
+
+  .btn-blue {
+    color: #fff;
+    background: rgba(40, 80, 180, 0.7);
+    border-color: #2244cc;
+    box-shadow: 0 4px 0 #112288;
+  }
+
+  .btn-blue:hover {
+    background: rgba(50, 90, 200, 0.85);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #112288;
+  }
+
+  .btn-blue:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #112288;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #000;
+    border-top: 4px solid #444;
+    padding: 16px 20px;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(0.5rem, 0.9vw, 0.6rem);
+    color: #555;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="disclaimer">
+    Garry Tan has no affiliation with this project, and any mentions of his name are for context only. The animation shown in this project is entirely fictional and has no reference to any real individuals, including Garry Tan. Any resemblance is purely coincidental, and the project makes no claim to represent real personalities. The product is created solely for demonstrative and creative purposes.
+  </div>
+
+  <div class="section-title">SMC FACTORY POSITIONING</div>
+
+  <div class="manifesto">
+    <p class="highlight">AI agents that don't make money are toys.</p>
+
+    <p>SMC Factory is an autonomous startup factory built on top of GStack skills for Claude Code. It discovers, validates, and launches startups without human involvement.</p>
+
+    <p>SMC does not build products. It builds a system that repeatedly turns ideas into revenue generating businesses in the shortest possible time.</p>
+
+    <p>Each startup is a unit of output. The factory compounds. More runs produce more businesses, more data, and better decisions.</p>
+
+    <p>Revenue is not centralized. It is distributed by design across participants in the system.</p>
+
+    <p>SMC improves itself with every cycle. It publishes what it builds, how it performs, and how revenue flows.</p>
+  </div>
+
+  <div class="buttons">
+    <a href="https://dexscreener.com/base/0xa73b6b6868c1ebb8a75406e8e0730fc3fb2733e8d24227bdf1bcd74c303de4a1" target="_blank" class="btn btn-red">$SMCF</a>
+    <a href="https://x.com/0xsmcai" target="_blank" class="btn btn-blue">@0xsmcai</a>
+  </div>
+
+</div>
+
+<div class="footer">
+  &copy; 2026 SMC Factory. All rights reserved.
+</div>
+
+</body>
+</html>
