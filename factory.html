@@ -55,7 +55,76 @@
 
   @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-120vw); } }
 
-  /* ── GARRY ON CLOUD ── */
+  /* ── NV ON CLOUD (left) ── */
+  .nv-cloud {
+    position: absolute;
+    top: 6%;
+    left: 8%;
+    z-index: 12;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: cloud-shake-nv 3.5s ease-in-out infinite;
+  }
+
+  .nv-img {
+    width: clamp(48px, 8vw, 80px);
+    height: auto;
+    image-rendering: pixelated;
+    margin-bottom: -8px;
+    z-index: 13;
+    position: relative;
+  }
+
+  .nv-seat {
+    width: clamp(72px, 12vw, 120px);
+    height: clamp(20px, 3vw, 32px);
+    background: #fff;
+    position: relative;
+    opacity: 0.9;
+  }
+  .nv-seat::before {
+    content: '';
+    position: absolute;
+    background: #fff;
+    width: 60%;
+    height: 60%;
+    top: -40%;
+    left: 15%;
+  }
+  .nv-seat::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    width: 40%;
+    height: 50%;
+    top: -30%;
+    left: 50%;
+  }
+
+  .nv-title {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(0.3rem, 0.6vw, 0.4rem);
+    color: #333;
+    text-shadow: 1px 1px 0 #fff;
+    white-space: nowrap;
+    font-family: 'Press Start 2P', monospace;
+    z-index: 14;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  @keyframes cloud-shake-nv {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-2px) rotate(-0.4deg); }
+    50% { transform: translateY(3px) rotate(0.3deg); }
+    75% { transform: translateY(-1px) rotate(-0.2deg); }
+  }
+
+  /* ── GARRY ON CLOUD (right) ── */
   .garry-cloud {
     position: absolute;
     top: 6%;
@@ -564,6 +633,13 @@
   <div class="cloud cloud-5"></div>
   <div class="cloud cloud-6"></div>
   <div class="cloud cloud-7"></div>
+
+  <div class="nv-cloud">
+    <img src="nv.webp" alt="" class="nv-img">
+    <div class="nv-seat">
+      <span class="nv-title">NV<br>Factory Owner</span>
+    </div>
+  </div>
 
   <div class="garry-cloud">
     <img src="garry.webp" alt="" class="garry-img">
