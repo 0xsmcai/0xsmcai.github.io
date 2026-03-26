@@ -55,6 +55,61 @@
 
   @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-120vw); } }
 
+  /* ── GARRY ON CLOUD ── */
+  .garry-cloud {
+    position: absolute;
+    top: 6%;
+    right: 8%;
+    z-index: 12;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: cloud-shake 3s ease-in-out infinite;
+  }
+
+  .garry-img {
+    width: clamp(48px, 8vw, 80px);
+    height: auto;
+    image-rendering: pixelated;
+    margin-bottom: -8px;
+    z-index: 13;
+    position: relative;
+  }
+
+  .garry-seat {
+    width: clamp(72px, 12vw, 120px);
+    height: clamp(20px, 3vw, 32px);
+    background: #fff;
+    border-radius: 0;
+    position: relative;
+    opacity: 0.9;
+  }
+  .garry-seat::before {
+    content: '';
+    position: absolute;
+    background: #fff;
+    width: 60%;
+    height: 60%;
+    top: -40%;
+    left: 15%;
+  }
+  .garry-seat::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    width: 40%;
+    height: 50%;
+    top: -30%;
+    left: 50%;
+  }
+
+  @keyframes cloud-shake {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-3px) rotate(0.5deg); }
+    50% { transform: translateY(2px) rotate(-0.3deg); }
+    75% { transform: translateY(-2px) rotate(0.2deg); }
+  }
+
   /* ── TITLE ── */
   .title-block {
     position: absolute;
@@ -496,6 +551,11 @@
   <div class="cloud cloud-5"></div>
   <div class="cloud cloud-6"></div>
   <div class="cloud cloud-7"></div>
+
+  <div class="garry-cloud">
+    <img src="garry.png" alt="" class="garry-img">
+    <div class="garry-seat"></div>
+  </div>
 
   <div class="title-block">
     <div class="title">SMC FACTORY</div>
