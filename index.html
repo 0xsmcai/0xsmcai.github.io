@@ -476,22 +476,24 @@ function drawMascot(obs) {
   ctx.closePath();
   ctx.clip();
 
-  // Draw mascot image centered in circle, covering the circle area
-  // The image is a portrait — we want to show the head (top ~70%)
+  // Draw mascot image filling the circle — cover fit, centered on the face
+  const d = obs.r * 2;
   const imgAspect = mascotImg.width / mascotImg.height;
-  const drawSize = obs.r * 2.2;
-  const drawW = drawSize;
-  const drawH = drawSize / imgAspect;
+  // Scale image so the shorter dimension fills the circle diameter
+  let drawW, drawH;
+  if (imgAspect >= 1) {
+    drawH = d;
+    drawW = d * imgAspect;
+  } else {
+    drawW = d;
+    drawH = d / imgAspect;
+  }
+  // Center horizontally, shift up slightly to focus on the head/face
   const drawX = obs.x - drawW / 2;
-  const drawY = obs.y - obs.r * 0.85;
+  const drawY = obs.y - drawH * 0.42;
 
-  ctx.globalAlpha = 0.12;
+  ctx.globalAlpha = 1.0;
   ctx.drawImage(mascotImg, drawX, drawY, drawW, drawH);
-
-  // Red glow overlay
-  ctx.globalAlpha = 0.06;
-  ctx.fillStyle = '#ff3333';
-  ctx.fill();
 
   ctx.restore();
 
