@@ -10,7 +10,8 @@
 <meta property="og:image" content="./mascot.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -51,12 +52,11 @@ body {
 
 .headline-line {
   position: absolute;
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 900;
-  font-variation-settings: 'WONK' 1, 'SOFT' 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
   color: #e8e4dc;
   white-space: pre;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .credit {
@@ -70,21 +70,13 @@ body {
 .body-line {
   position: absolute;
   z-index: 1;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-optical-sizing: auto;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 400;
   color: #d4d0c8;
   white-space: pre;
 }
 
-.drop-cap {
-  position: absolute;
-  z-index: 1;
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 700;
-  font-variation-settings: 'WONK' 1, 'SOFT' 0;
-  color: #e8e4dc;
-  line-height: 1;
-}
+.drop-cap { display: none; }
 
 .cta-wrap {
   position: absolute;
@@ -167,16 +159,15 @@ body {
 import { prepareWithSegments, layoutNextLine, walkLineRanges } from './pretext.js';
 
 // ── Config ──
-const BODY_FONT_SIZE = 18;
-const BODY_LINE_HEIGHT = 30;
-const BODY_FONT = BODY_FONT_SIZE + 'px "Bricolage Grotesque", sans-serif';
-const HEADLINE_FAMILY = '"Fraunces", Georgia, serif';
+const BODY_FONT_SIZE = 13;
+const BODY_LINE_HEIGHT = 19;
+const BODY_FONT = BODY_FONT_SIZE + 'px "Satoshi", sans-serif';
+const HEADLINE_FAMILY = '"Space Grotesk", sans-serif';
 const HEADLINE_TEXT = 'SMCFactory';
 const GUTTER = 48;
 const COL_GAP = 40;
 const NARROW_BP = 760;
 const NARROW_GUTTER = 20;
-const DROP_CAP_LINES = 3;
 const OBSTACLE_R = 130;
 const OBSTACLE_R_MOBILE = 75;
 const OBSTACLE_PAD = 14;
@@ -217,7 +208,7 @@ function fitHeadline(text, maxWidth) {
   let lo = 24, hi = 200, best = 24;
   while (lo <= hi) {
     const mid = (lo + hi) >> 1;
-    const font = '900 ' + mid + 'px ' + HEADLINE_FAMILY;
+    const font = '700 ' + mid + 'px ' + HEADLINE_FAMILY;
     const p = prepareWithSegments(text, font);
     let lines = 0;
     walkLineRanges(p, maxWidth, () => { lines++; });
@@ -290,7 +281,7 @@ function layoutPage(obs) {
   const headlineTop = isNarrow ? 32 : Math.max(48, w * 0.04);
   const headlineMaxW = contentW;
   const headlineFontSize = fitHeadline(HEADLINE_TEXT, headlineMaxW);
-  const headlineFont = '900 ' + headlineFontSize + 'px ' + HEADLINE_FAMILY;
+  const headlineFont = '700 ' + headlineFontSize + 'px ' + HEADLINE_FAMILY;
   const headlineLH = Math.round(headlineFontSize * 0.95);
   const headlinePrepared = prepareWithSegments(HEADLINE_TEXT, headlineFont);
   const headlineLines = [];
@@ -316,10 +307,6 @@ function layoutPage(obs) {
   // Body starts
   const bodyTop = creditTop + 20 + (isNarrow ? 12 : 24);
 
-  // Drop cap
-  const firstChar = BODY_TEXT[0];
-  const dc = measureDropCap(firstChar, BODY_LINE_HEIGHT);
-
   // Columns
   const colGap = isNarrow ? 0 : COL_GAP;
   const numCols = isNarrow ? 1 : 2;
@@ -337,8 +324,7 @@ function layoutPage(obs) {
   // left column fills first, then right continues from the same cursor.
   const bodyLines = [];
   let cursor = { segmentIndex: 0, graphemeIndex: 0 };
-  const bodyWithoutFirstChar = BODY_TEXT.slice(1);
-  const preparedBodyDC = prepareWithSegments(bodyWithoutFirstChar, BODY_FONT);
+  const preparedBodyFull = prepareWithSegments(BODY_TEXT, BODY_FONT);
 
   // Column height: enough to fill ~viewport, but text can overflow into scrollable area
   const colHeight = Math.max(800, window.innerHeight - bodyTop + 200);
@@ -355,20 +341,12 @@ function layoutPage(obs) {
     while (lineY < colBottom) {
       let slot = carveLineWidth(lineY, BODY_LINE_HEIGHT, col.x, col.w, obs);
 
-      // Drop cap obstacle (first 3 lines of first column only)
-      if (colIdx === 0 && lineY < bodyTop + dc.height) {
-        const dcRight = gutter + dc.width;
-        if (slot && slot.x < dcRight) {
-          slot = { x: dcRight, w: slot.x + slot.w - dcRight };
-        }
-      }
-
       if (!slot || slot.w < 40) {
         lineY += BODY_LINE_HEIGHT;
         continue;
       }
 
-      const line = layoutNextLine(preparedBodyDC, cursor, slot.w);
+      const line = layoutNextLine(preparedBodyFull, cursor, slot.w);
       if (!line) { textExhausted = true; break; }
 
       bodyLines.push({
@@ -388,7 +366,6 @@ function layoutPage(obs) {
     headlineLines, headlineFont, headlineLH,
     creditLeft, creditTop,
     bodyLines, bodyTop,
-    dropCap: { char: firstChar, font: dc.font, fontSize: dc.fontSize, x: gutter, y: bodyTop - 2, width: dc.width, height: dc.height },
     stageHeight: maxY + 80,
     gutter, isNarrow
   };
@@ -543,7 +520,6 @@ function commitFrame(now) {
   creditEl.style.left = layout.creditLeft + 'px';
   creditEl.style.top = layout.creditTop + 'px';
 
-  renderDropCap(layout.dropCap);
   renderBody(layout.bodyLines);
   renderCTA(layout.stageHeight, layout.gutter);
   drawMascot(obs);
