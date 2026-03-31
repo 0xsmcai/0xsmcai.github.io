@@ -3,93 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMC Factory — Autonomous Startup Factory</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<title>SMC Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   html, body {
-    background: linear-gradient(180deg, #0a0a12 0%, #06060a 100%);
-    color: #ddd8d0;
+    background: #0e0e0e;
+    color: #d4d0c8;
     min-height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
   }
 
   body {
-    font-family: 'Press Start 2P', monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     position: relative;
   }
 
-  /* ── ASCII art container ── */
-  #ascii-art {
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 10px;
-    padding: 14px;
-    background: rgba(0,0,0,0.4);
-    overflow: hidden;
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 4px 20px rgba(0,0,0,0.3);
+  /* ── Tap overlay ── */
+  #tap-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(14, 14, 14, 0.6);
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: opacity 0.4s ease;
+  }
+
+  #tap-overlay span {
+    font: 300 16px "Fraunces", serif;
+    font-variation-settings: 'WONK' 1, 'SOFT' 0;
+    color: #d4d0c8;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    border: 1px solid rgba(212, 208, 200, 0.25);
+  }
+
+  #tap-overlay:hover span {
+    border-color: rgba(212, 208, 200, 0.5);
+  }
+
+  /* ── Title ── */
+  .title {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'WONK' 1, 'SOFT' 0;
+    font-weight: 900;
+    font-size: clamp(28px, 5vw, 56px);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #d4d0c8;
+    text-align: center;
+    padding: 40px 20px 12px;
     position: relative;
     z-index: 1;
   }
 
+  /* ── Cycling subtitle ── */
+  #cycle-art {
+    position: relative;
+    z-index: 1;
+    padding: 8px 14px;
+    margin-bottom: 8px;
+    min-height: 75px;
+  }
+
+  .cycle-row {
+    white-space: pre;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  /* ── ASCII portrait container ── */
+  #ascii-art {
+    position: relative;
+    z-index: 1;
+    padding: 0 14px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    overflow: hidden;
+  }
+
   .art-row {
     white-space: pre;
-    font-family: Georgia, Palatino, "Times New Roman", serif;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-optical-sizing: auto;
     font-size: 13px;
   }
 
   /* Font weight classes */
+  .w2 { font-weight: 200; }
   .w3 { font-weight: 300; }
+  .w4 { font-weight: 400; }
   .w5 { font-weight: 500; }
+  .w6 { font-weight: 600; }
+  .w7 { font-weight: 700; }
   .w8 { font-weight: 800; }
-  .it { font-style: italic; }
 
-  /* Brightness/opacity classes — golden amber */
-  .a1 { color: rgba(196,163,90,0.10); }
-  .a2 { color: rgba(196,163,90,0.20); }
-  .a3 { color: rgba(196,163,90,0.30); }
-  .a4 { color: rgba(196,163,90,0.40); }
-  .a5 { color: rgba(196,163,90,0.50); }
-  .a6 { color: rgba(196,163,90,0.60); }
-  .a7 { color: rgba(196,163,90,0.70); }
-  .a8 { color: rgba(196,163,90,0.80); }
-  .a9 { color: rgba(196,163,90,0.90); }
-  .a10 { color: rgba(196,163,90,1.0); }
+  /* Brightness/opacity classes — warm off-white */
+  .a1  { color: rgba(212,208,200,0.10); }
+  .a2  { color: rgba(212,208,200,0.20); }
+  .a3  { color: rgba(212,208,200,0.30); }
+  .a4  { color: rgba(212,208,200,0.40); }
+  .a5  { color: rgba(212,208,200,0.50); }
+  .a6  { color: rgba(212,208,200,0.60); }
+  .a7  { color: rgba(212,208,200,0.70); }
+  .a8  { color: rgba(212,208,200,0.80); }
+  .a9  { color: rgba(212,208,200,0.90); }
+  .a10 { color: rgba(212,208,200,1.0); }
 
   /* ── CTA button ── */
   .cta-wrap {
-    position: absolute;
-    bottom: 15%;
-    left: 50%;
-    transform: translateX(-50%);
+    padding: 24px 0 40px;
+    text-align: center;
+    position: relative;
     z-index: 10;
   }
 
   .cta-btn {
     display: inline-block;
-    font-family: 'Press Start 2P', monospace;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
     font-size: clamp(10px, 1.4vw, 14px);
-    color: #fff;
-    background: rgba(0,0,0,0.7);
-    border: 2px solid rgba(196,163,90,0.6);
+    color: #d4d0c8;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(196,163,90,0.5);
     padding: 16px 32px;
     text-decoration: none;
-    text-shadow: 0 0 8px rgba(196,163,90,0.5);
     cursor: pointer;
     transition: all 0.3s ease;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
     min-height: 44px;
   }
 
   .cta-btn:hover {
-    background: rgba(196,163,90,0.15);
-    border-color: rgba(196,163,90,0.9);
-    box-shadow: 0 0 20px rgba(196,163,90,0.3);
+    background: rgba(196,163,90,0.1);
+    border-color: rgba(196,163,90,0.8);
+    box-shadow: 0 0 20px rgba(196,163,90,0.15);
+    color: #e8e4da;
   }
 
   /* ── Scanline overlay ── */
@@ -112,29 +174,42 @@
     position: fixed;
     bottom: 12px;
     right: 16px;
-    font: 400 9px/1 'Press Start 2P', monospace;
-    color: rgba(255,255,255,0.08);
+    font: 400 10px 'Space Mono', monospace;
+    color: rgba(255,255,255,0.06);
     z-index: 6;
   }
 
   /* ── Responsive ── */
-  @media (max-width: 600px) {
-    #ascii-art { padding: 8px; }
-    .art-row { font-size: 8px; }
-    .cta-btn { font-size: 9px; padding: 12px 20px; }
+  @media (max-width: 768px) {
+    .art-row { font-size: 7px; line-height: 8px !important; height: 8px !important; }
+    .cycle-row { font-size: 9px; }
+    .title { font-size: 24px; letter-spacing: 0.15em; padding: 24px 16px 8px; }
+    .cta-btn { font-size: 10px; padding: 12px 20px; letter-spacing: 2px; }
+    #cycle-art { min-height: 40px; }
+  }
+
+  @media (max-width: 480px) {
+    .art-row { font-size: 5px; line-height: 6px !important; height: 6px !important; }
+    .title { font-size: 18px; }
   }
 </style>
 </head>
 <body>
 
+  <div id="tap-overlay"><span>Tap to begin</span></div>
+
+  <h1 class="title">SMC Factory</h1>
+
+  <div id="cycle-art"></div>
+
   <div id="ascii-art"></div>
 
   <div class="cta-wrap">
-    <a class="cta-btn" href="about.html">ENTER THE FACTORY</a>
+    <a class="cta-btn" href="about.html">Enter the Factory</a>
   </div>
 
   <div class="scanlines"></div>
-  <div class="credit">Built with pretext</div>
+  <div class="credit">0xSMC</div>
 
   <script type="module" src="./factory-splash.js"></script>
 </body>
