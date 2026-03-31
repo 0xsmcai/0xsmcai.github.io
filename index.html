@@ -3,776 +3,581 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>0xSMC — Community Liquidity Engine</title>
-<meta name="description" content="Autonomous AI agent that coordinates community capital into actively managed LP positions on Base chain.">
+<title>SMCFactory — Autonomous Startup Factory</title>
+<meta name="description" content="SMCFactory is a real Zero-Human Company running live on Base. An autonomous AI agent that finds demand, builds products, and launches tokens.">
+<meta property="og:title" content="SMCFactory">
+<meta property="og:description" content="Zero-Human Company on Base. Autonomous AI that builds real products onchain.">
+<meta property="og:image" content="./mascot.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --green: #00ff88;
-    --green-dim: #00cc6a;
-    --red: #ff4444;
-    --yellow: #ffaa00;
-    --gray: #666666;
-    --gray-dim: #444444;
-    --gray-dark: #222222;
-    --bg: #0a0a0a;
-    --bg-panel: #0f0f0f;
-    --white: #e0e0e0;
-    --white-bright: #ffffff;
-    --cyan: #00d4ff;
-    --magenta: #ff44cc;
-  }
-
-  html {
-    font-size: 14px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--gray-dark) var(--bg);
-  }
-
-  body {
-    background: var(--bg);
-    background-image: radial-gradient(ellipse at 50% 0%, rgba(0, 255, 136, 0.03), var(--bg) 70%);
-    color: var(--white);
-    font-family: 'JetBrains Mono', monospace;
-    line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* CRT scanlines + RGB sub-pixel simulation */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
-      linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.015), rgba(0, 0, 255, 0.03));
-    background-size: 100% 3px, 3px 100%;
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* Slow moving scanline bar */
-  body::after {
-    content: '';
-    position: fixed;
-    top: -100%;
-    left: 0;
-    width: 100%;
-    height: 80px;
-    background: linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0) 0%,
-      rgba(0, 255, 136, 0.04) 50%,
-      rgba(0, 0, 0, 0) 100%
-    );
-    animation: scanbar 8s linear infinite;
-    pointer-events: none;
-    z-index: 9998;
-  }
-
-  @keyframes scanbar {
-    0% { top: -80px; }
-    100% { top: 100vh; }
-  }
-
-  ::selection {
-    background: var(--green);
-    color: var(--bg);
-  }
-
-  a { color: var(--green); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-
-  .container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 0 20px;
-    animation: flicker 4s infinite;
-  }
-
-  /* ── HEADER ── */
-  .header {
-    padding: 40px 0 0;
-  }
-
-  .banner {
-    border: 1px solid var(--gray-dark);
-    padding: 20px 24px;
-    position: relative;
-    background: var(--bg-panel);
-  }
-
-  .banner-top, .banner-bottom {
-    color: var(--gray-dark);
-    font-size: 0.85rem;
-    user-select: none;
-  }
-
-  .ascii-logo {
-    color: var(--green);
-    font-size: 0.55rem;
-    line-height: 1.1;
-    margin: 0;
-    white-space: pre;
-    font-variant-ligatures: none;
-    overflow-x: auto;
-  }
-
-  .banner-title {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--green);
-    letter-spacing: 2px;
-  }
-
-  .banner-sub {
-    color: var(--white);
-    font-weight: 400;
-    font-size: 0.95rem;
-    margin-top: 4px;
-  }
-
-  .banner-tagline {
-    color: var(--gray);
-    font-size: 0.85rem;
-    margin-top: 8px;
-    font-style: italic;
-  }
-
-  .status-line {
-    margin-top: 16px;
-    padding: 10px 0;
-    border-top: 1px solid var(--gray-dark);
-    font-size: 0.85rem;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .status-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 0;
-  }
-
-  .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
-  .dot-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
-  .dot-red { background: var(--red); }
-  .dot-gray { background: var(--gray); }
-
-  .blink {
-    animation: blink 1s step-end infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-
-  /* Cursor blink — full block character style */
-  .cursor::after {
-    content: '\2588';
-    color: var(--green);
-    animation: blink 1s step-end infinite;
-    text-shadow: 0 0 5px rgba(0, 255, 136, 0.7);
-  }
-
-  /* Subtle CRT flicker on the whole page */
-  @keyframes flicker {
-    0% { opacity: 0.97; }
-    5% { opacity: 0.98; }
-    10% { opacity: 0.99; }
-    15% { opacity: 0.97; }
-    20% { opacity: 1; }
-    50% { opacity: 0.98; }
-    80% { opacity: 0.99; }
-    90% { opacity: 0.97; }
-    100% { opacity: 0.98; }
-  }
-
-
-  /* ── SECTIONS ── */
-  .section {
-    margin-top: 40px;
-  }
-
-  .section-header {
-    color: var(--cyan);
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--gray-dark);
-    text-transform: uppercase;
-  }
-
-  .section-header .prompt {
-    color: var(--green);
-    margin-right: 8px;
-  }
-
-  .section-header .path {
-    color: var(--gray);
-  }
-
-  /* ── WHAT IS THIS ── */
-  .description {
-    color: var(--white);
-    font-size: 0.9rem;
-    line-height: 1.8;
-    padding-left: 20px;
-    border-left: 2px solid var(--gray-dark);
-  }
-
-  /* ── PROBLEM ── */
-  .problem-list {
-    list-style: none;
-  }
-
-  .problem-list li {
-    padding: 6px 0;
-    font-size: 0.9rem;
-  }
-
-  .problem-list .prompt-marker {
-    color: var(--red);
-    margin-right: 8px;
-  }
-
-  .problem-list .result {
-    color: var(--yellow);
-    font-weight: 500;
-  }
-
-  /* ── HOW IT WORKS ── */
-  .flow {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    margin-top: 8px;
-  }
-
-  .flow-step {
-    padding: 16px 12px;
-    border: 1px solid var(--gray-dark);
-    text-align: center;
-    position: relative;
-    background: var(--bg-panel);
-  }
-
-  .flow-step:not(:last-child)::after {
-    content: '→';
-    position: absolute;
-    right: -12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--green);
-    font-size: 1.2rem;
-    z-index: 1;
-    width: 24px;
-    text-align: center;
-  }
-
-  .flow-num {
-    color: var(--gray);
-    font-size: 0.7rem;
-    margin-bottom: 4px;
-  }
-
-  .flow-label {
-    color: var(--green);
-    font-weight: 700;
-    font-size: 0.85rem;
-    margin-bottom: 6px;
-  }
-
-  .flow-desc {
-    color: var(--gray);
-    font-size: 0.72rem;
-    line-height: 1.4;
-  }
-
-  /* ── ASCII TABLE ── */
-  .ascii-table {
-    font-size: 0.85rem;
-    width: 100%;
-    overflow-x: auto;
-  }
-
-  .ascii-table pre {
-    color: var(--white);
-    line-height: 1.5;
-    white-space: pre;
-  }
-
-  .ascii-table .header-row { color: var(--cyan); }
-  .ascii-table .border-row { color: var(--gray-dark); }
-  .ascii-table .val-green { color: var(--green); }
-  .ascii-table .val-yellow { color: var(--yellow); }
-  .ascii-table .val-red { color: var(--red); }
-
-  /* ── FEE MODEL ── */
-  .fee-box {
-    border: 1px solid var(--gray-dark);
-    background: var(--bg-panel);
-    padding: 20px 24px;
-  }
-
-  .fee-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--gray-dark);
-    font-size: 0.85rem;
-  }
-
-  .fee-row:last-child { border-bottom: none; }
-
-  .fee-label { color: var(--gray); }
-  .fee-value { color: var(--green); font-weight: 500; }
-  .fee-note {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--gray-dark);
-    font-size: 0.8rem;
-    color: var(--yellow);
-  }
-
-  /* ── ROADMAP ── */
-  .roadmap {
-    font-size: 0.9rem;
-    line-height: 2;
-  }
-
-  .roadmap-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .roadmap-tree { color: var(--gray-dark); user-select: none; min-width: 24px; }
-  .roadmap-phase { color: var(--white); }
-  .roadmap-status { margin-left: auto; font-size: 0.8rem; white-space: nowrap; }
-  .active { color: var(--green); }
-  .planned { color: var(--gray); }
-
-  /* ── TECH STACK ── */
-  .stack-list {
-    list-style: none;
-    font-size: 0.85rem;
-  }
-
-  .stack-list li {
-    padding: 6px 0;
-    display: flex;
-    gap: 8px;
-  }
-
-  .stack-name { color: var(--green); min-width: 200px; }
-  .stack-dots { color: var(--gray-dark); flex-shrink: 0; }
-  .stack-desc { color: var(--gray); }
-
-  /* ── KILL CRITERIA ── */
-  .kill-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-  }
-
-  .kill-table th {
-    text-align: left;
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--gray);
-    color: var(--cyan);
-    font-weight: 500;
-  }
-
-  .kill-table td {
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--gray-dark);
-    color: var(--white);
-  }
-
-  .kill-table tr:last-child td { border-bottom: none; }
-  .kill-table .metric { color: var(--yellow); }
-  .kill-table .action { color: var(--red); }
-
-  /* ── LEGACY HOLDERS ── */
-  .holders-box {
-    border: 1px solid var(--gray-dark);
-    background: var(--bg-panel);
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .holders-count {
-    font-size: 1.8rem;
-    color: var(--green);
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .holders-label {
-    font-size: 0.85rem;
-    color: var(--gray);
-  }
-
-  .holders-status {
-    font-size: 0.8rem;
-    color: var(--yellow);
-    margin-top: 4px;
-  }
-
-  /* ── LINKS ── */
-  .links-list {
-    list-style: none;
-    font-size: 0.9rem;
-  }
-
-  .links-list li {
-    padding: 8px 0;
-  }
-
-  .links-list .cmd { color: var(--green); }
-  .links-list .arrow { color: var(--gray-dark); margin: 0 12px; }
-  .links-list a { color: var(--white); }
-  .links-list a:hover { color: var(--green); }
-
-  /* ── DISCLAIMER ── */
-  .disclaimer {
-    margin-top: 60px;
-    padding: 20px 0;
-    border-top: 1px solid var(--gray-dark);
-    font-size: 0.7rem;
-    color: var(--gray-dim);
-    line-height: 1.8;
-  }
-
-  /* ── FOOTER ── */
-  .footer {
-    margin-top: 20px;
-    padding-bottom: 40px;
-    font-size: 0.75rem;
-    color: var(--gray-dark);
-    text-align: center;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 700px) {
-    html { font-size: 12px; }
-
-    .flow {
-      grid-template-columns: 1fr;
-      gap: 0;
-    }
-
-    .flow-step:not(:last-child)::after {
-      content: '↓';
-      right: 50%;
-      top: auto;
-      bottom: -14px;
-      transform: translateX(50%);
-    }
-
-    .status-line {
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .stack-name { min-width: 140px; }
-
-    .holders-box {
-      flex-direction: column;
-      text-align: center;
-    }
-
-    .fee-row {
-      flex-direction: column;
-      gap: 4px;
-    }
-  }
-
-  /* ── BOOT ANIMATION ── */
-  .boot-line {
-    opacity: 0;
-    animation: boot-in 0.05s forwards;
-  }
-
-  @keyframes boot-in {
-    to { opacity: 1; }
-  }
-
-  /* Staggered boot delays */
-  .boot-1 { animation-delay: 0.1s; }
-  .boot-2 { animation-delay: 0.2s; }
-  .boot-3 { animation-delay: 0.35s; }
-  .boot-4 { animation-delay: 0.5s; }
-  .boot-5 { animation-delay: 0.7s; }
-  .boot-6 { animation-delay: 0.9s; }
-  .boot-7 { animation-delay: 1.1s; }
-  .boot-8 { animation-delay: 1.3s; }
-  .boot-9 { animation-delay: 1.5s; }
-  .boot-10 { animation-delay: 1.7s; }
-  .boot-11 { animation-delay: 1.9s; }
-
-  /* Phosphor glow on green text */
-  .glow {
-    text-shadow:
-      0 0 5px rgba(0, 255, 136, 0.7),
-      0 0 10px rgba(0, 255, 136, 0.4),
-      0 0 20px rgba(0, 255, 136, 0.15);
-  }
-
-  /* Typing prompt at bottom */
-  .prompt-input {
-    margin-top: 40px;
-    padding: 16px 0;
-    border-top: 1px solid var(--gray-dark);
-    font-size: 0.85rem;
-    color: var(--gray);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .prompt-input .p-marker { color: var(--green); }
-  .prompt-input .p-path { color: var(--cyan); }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: #0e0e0e;
+  color: #d4d0c8;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#stage {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#mascot-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.headline {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+}
+
+.headline-line {
+  position: absolute;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 900;
+  font-variation-settings: 'WONK' 1, 'SOFT' 0;
+  color: #e8e4dc;
+  white-space: pre;
+  letter-spacing: -0.02em;
+}
+
+.credit {
+  position: absolute;
+  z-index: 1;
+  font: 400 12px 'Space Mono', monospace;
+  color: rgba(212,208,200,0.45);
+  letter-spacing: 1px;
+}
+
+.body-line {
+  position: absolute;
+  z-index: 1;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-optical-sizing: auto;
+  color: #d4d0c8;
+  white-space: pre;
+}
+
+.drop-cap {
+  position: absolute;
+  z-index: 1;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-variation-settings: 'WONK' 1, 'SOFT' 0;
+  color: #e8e4dc;
+  line-height: 1;
+}
+
+.cta-wrap {
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+  width: 100%;
+}
+
+.cta-btn {
+  display: inline-block;
+  font: 700 12px 'Space Mono', monospace;
+  color: #d4d0c8;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(196,163,90,0.4);
+  padding: 14px 32px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.cta-btn:hover {
+  background: rgba(196,163,90,0.1);
+  border-color: rgba(196,163,90,0.8);
+  box-shadow: 0 0 20px rgba(196,163,90,0.15);
+  color: #e8e4da;
+}
+
+.scanlines {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 100;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+
+.page-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 16px;
+  font: 400 10px 'Space Mono', monospace;
+  color: rgba(255,255,255,0.06);
+  z-index: 101;
+}
+
+::selection {
+  background: #c4a35a;
+  color: #0e0e0e;
+}
+
+/* Loading state */
+#stage.loading {
+  opacity: 0;
+}
+
+#stage {
+  transition: opacity 0.8s ease;
+}
 </style>
 </head>
 <body>
 
-<div class="container">
-
-  <!-- ═══ HEADER ═══ -->
-  <header class="header boot-line boot-1">
-    <div class="banner">
-      <pre class="ascii-logo glow" aria-label="0xSMC">
- ██████╗ ██╗  ██╗███████╗███╗   ███╗ ██████╗
-██╔═████╗╚██╗██╔╝██╔════╝████╗ ████║██╔════╝
-██║██╔██║ ╚███╔╝ ███████╗██╔████╔██║██║
-████╔╝██║ ██╔██╗ ╚════██║██║╚██╔╝██║██║
-╚██████╔╝██╔╝ ██╗███████║██║ ╚═╝ ██║╚██████╗
- ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝</pre>
-      <div class="banner-sub">Community Liquidity Engine</div>
-      <div class="banner-tagline">Turn dead token holdings into yield</div>
-    </div>
-    <div class="status-line">
-      <span class="status-item"><span class="dot dot-green blink"></span> ONLINE</span>
-      <span class="status-item"><span class="dot dot-yellow"></span> Phase: V0 Building</span>
-      <span class="status-item"><span class="dot dot-gray"></span> Base Chain</span>
-      <span class="status-item" style="color: var(--gray-dim);">pid 0xsmc</span>
-    </div>
-  </header>
-
-  <!-- ═══ WHAT IS THIS ═══ -->
-  <section class="section boot-line boot-2">
-    <div class="section-header">
-      <span class="prompt">$</span> cat /about<span class="path"> ── what is this</span>
-    </div>
-    <div class="description">
-      0xSMC is an autonomous AI agent that coordinates community capital into actively managed LP positions on Base. Deposit ETH + token. The agent optimizes your LP range, rebalances when price drifts, and compounds fees. You earn swap fees. Everything on-chain. $100 max deposit. Watch us learn.
-    </div>
-  </section>
-
-  <!-- ═══ THE PROBLEM ═══ -->
-  <section class="section boot-line boot-3">
-    <div class="section-header">
-      <span class="prompt">$</span> cat /problem<span class="path"> ── why this exists</span>
-    </div>
-    <ul class="problem-list">
-      <li><span class="prompt-marker">$</span> Professional market makers: $10K–$150K/month retainer</li>
-      <li><span class="prompt-marker">$</span> Budget market makers: rug and vanish</li>
-      <li><span class="prompt-marker">$</span> DIY tools: require quant expertise + 24/7 monitoring</li>
-      <li><span class="prompt-marker">$</span> Current state: communities sitting on dead assets</li>
-      <li class="result"><span class="prompt-marker" style="color: var(--yellow);">→</span> <span class="result">Nobody serves small communities. We do.</span></li>
-    </ul>
-  </section>
-
-  <!-- ═══ HOW IT WORKS ═══ -->
-  <section class="section boot-line boot-4">
-    <div class="section-header">
-      <span class="prompt">$</span> cat /how<span class="path"> ── four steps</span>
-    </div>
-    <div class="flow">
-      <div class="flow-step">
-        <div class="flow-num">01</div>
-        <div class="flow-label">DEPOSIT</div>
-        <div class="flow-desc">ETH + token into vault. $100 max per wallet.</div>
-      </div>
-      <div class="flow-step">
-        <div class="flow-num">02</div>
-        <div class="flow-label">AI MANAGES</div>
-        <div class="flow-desc">Agent optimizes LP range &amp; rebalances on drift.</div>
-      </div>
-      <div class="flow-step">
-        <div class="flow-num">03</div>
-        <div class="flow-label">EARN FEES</div>
-        <div class="flow-desc">Swap fees accrue. No fee if vault is underwater.</div>
-      </div>
-      <div class="flow-step">
-        <div class="flow-num">04</div>
-        <div class="flow-label">DASHBOARD</div>
-        <div class="flow-desc">Track NAV, fees, IL &mdash; everything transparent.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ FEE MODEL ═══ -->
-  <section class="section boot-line boot-5">
-    <div class="section-header">
-      <span class="prompt">$</span> cat /fees<span class="path"> ── fee model</span>
-    </div>
-    <div class="fee-box">
-      <div class="fee-row">
-        <span class="fee-label">Performance fee</span>
-        <span class="fee-value">10%</span>
-      </div>
-      <div class="fee-row">
-        <span class="fee-label">Fee basis</span>
-        <span class="fee-value">NAV high-water mark</span>
-      </div>
-      <div class="fee-row">
-        <span class="fee-label">Charged when</span>
-        <span class="fee-value">New all-time highs only</span>
-      </div>
-      <div class="fee-row">
-        <span class="fee-label">Vault underwater?</span>
-        <span class="fee-value" style="color: var(--yellow);">You pay $0</span>
-      </div>
-      <div class="fee-note">
-        → We only eat when you eat. No management fees. No lockups. Withdraw anytime.
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ ROADMAP ═══ -->
-  <section class="section boot-line boot-6">
-    <div class="section-header">
-      <span class="prompt">$</span> cat /roadmap<span class="path"> ── evolution</span>
-    </div>
-    <div class="roadmap">
-      <div class="roadmap-item">
-        <span class="roadmap-tree">├──</span>
-        <span class="roadmap-phase"><strong>V0: LP Vault</strong> — managed liquidity positions</span>
-        <span class="roadmap-status active">● current</span>
-      </div>
-      <div class="roadmap-item">
-        <span class="roadmap-tree">├──</span>
-        <span class="roadmap-phase"><strong>V1: Active Management</strong> — multi-strategy regime detection</span>
-        <span class="roadmap-status planned">○ planned</span>
-      </div>
-      <div class="roadmap-item">
-        <span class="roadmap-tree">├──</span>
-        <span class="roadmap-phase"><strong>V2: Cross-Pool Arbitrage</strong> — earn the MM title</span>
-        <span class="roadmap-status planned">○ planned</span>
-      </div>
-      <div class="roadmap-item">
-        <span class="roadmap-tree">└──</span>
-        <span class="roadmap-phase"><strong>V3: Liquidity Network</strong> — multi-token, multi-chain</span>
-        <span class="roadmap-status planned">○ planned</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ TECH STACK ═══ -->
-  <section class="section boot-line boot-7">
-    <div class="section-header">
-      <span class="prompt">$</span> ls /stack<span class="path"> ── what powers this</span>
-    </div>
-    <ul class="stack-list">
-      <li><span class="stack-name">Hummingbot MCP</span><span class="stack-dots">........</span><span class="stack-desc">strategy engine (21 tools)</span></li>
-      <li><span class="stack-name">Claude Code</span><span class="stack-dots">............</span><span class="stack-desc">agent brain + orchestrator</span></li>
-      <li><span class="stack-name">Uniswap V4 SDK</span><span class="stack-dots">.........</span><span class="stack-desc">on-chain execution</span></li>
-      <li><span class="stack-name">Bankr</span><span class="stack-dots">.................</span><span class="stack-desc">token launch platform</span></li>
-      <li><span class="stack-name">Base chain</span><span class="stack-dots">.............</span><span class="stack-desc">$0.01 gas per tx</span></li>
-      <li><span class="stack-name">Telegram</span><span class="stack-dots">..............</span><span class="stack-desc">community + agent control</span></li>
-    </ul>
-  </section>
-
-  <!-- ═══ KILL CRITERIA ═══ -->
-  <section class="section boot-line boot-8">
-    <div class="section-header">
-      <span class="prompt">$</span> cat /kill-criteria<span class="path"> ── how this fails</span>
-    </div>
-    <table class="kill-table">
-      <thead>
-        <tr>
-          <th>Metric</th>
-          <th>Threshold</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="metric">Active LP vs passive</td>
-          <td>Underperforms after 30 days</td>
-          <td class="action">Pause &amp; rethink</td>
-        </tr>
-        <tr>
-          <td class="metric">Depositors</td>
-          <td>&lt;5 in 2 weeks</td>
-          <td class="action">Demand isn't there</td>
-        </tr>
-        <tr>
-          <td class="metric">Daily volume</td>
-          <td>&lt;1.5x vault TVL for 2 weeks</td>
-          <td class="action">Wrong token/market</td>
-        </tr>
-        <tr>
-          <td class="metric">NAV-per-share</td>
-          <td>Down 3 consecutive weeks</td>
-          <td class="action">Strategy failing</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- ═══ LINKS ═══ -->
-  <section class="section boot-line boot-10">
-    <div class="section-header">
-      <span class="prompt">$</span> cat /links<span class="path"> ── find us</span>
-    </div>
-    <ul class="links-list">
-      <li><span class="cmd">$ follow</span><span class="arrow">→</span><a href="https://x.com/0xsmcai" target="_blank" rel="noopener">x.com/0xsmcai</a></li>
-      <li><span class="cmd">$ dashboard</span><span class="arrow">→</span><span style="color: var(--yellow);">coming soon</span></li>
-    </ul>
-  </section>
-
-  <!-- ═══ PROMPT ═══ -->
-  <div class="prompt-input boot-line boot-11">
-    <span class="p-marker">$</span>
-    <span class="p-path">0xsmc@base</span>
-    <span style="color: var(--gray);">~</span>
-    <span class="cursor" aria-hidden="true"></span>
-  </div>
-
-  <!-- ═══ DISCLAIMER ═══ -->
-  <div class="disclaimer boot-line boot-11">
-    This is experimental software. 0xSMC is an autonomous AI agent managing liquidity positions — there are real risks including impermanent loss, smart contract bugs, and strategy underperformance. The $100 deposit cap exists to bound your exposure. Do not deposit money you cannot afford to lose. This is not financial advice. No guarantees of returns. Smart contracts will be audited but are unaudited during V0. By depositing, you accept all risks.
-  </div>
-
-  <!-- ═══ FOOTER ═══ -->
-  <div class="footer boot-line boot-11">
-    0xSMC — built by an AI, for the community
-  </div>
-
+<div id="stage" class="loading">
+  <canvas id="mascot-canvas"></canvas>
+  <h1 class="headline" id="headline"></h1>
+  <p class="credit" id="credit">Startup Factory Positioning Note &mdash; March 30, 2026</p>
 </div>
 
+<div class="scanlines"></div>
+<div class="page-credit">0xSMC</div>
+
+<script type="module">
+import { prepareWithSegments, layoutNextLine, walkLineRanges } from './pretext.js';
+
+// ── Config ──
+const BODY_FONT_SIZE = 18;
+const BODY_LINE_HEIGHT = 30;
+const BODY_FONT = BODY_FONT_SIZE + 'px "Bricolage Grotesque", sans-serif';
+const HEADLINE_FAMILY = '"Fraunces", Georgia, serif';
+const HEADLINE_TEXT = 'SMCFactory';
+const GUTTER = 48;
+const COL_GAP = 40;
+const NARROW_BP = 760;
+const NARROW_GUTTER = 20;
+const DROP_CAP_LINES = 3;
+const OBSTACLE_R = 130;
+const OBSTACLE_R_MOBILE = 75;
+const OBSTACLE_PAD = 14;
+
+// ── Body text ──
+const BODY_TEXT = "SMCFactory is a real Zero-Human Company running live on Base right now. It is an autonomous AI agent that finds genuine demand, builds working products quickly, validates them with real market feedback, and launches tokens only when something useful already exists. After launch, the agent maintains and operates the product on its own before moving on to the next build. There is no team handling execution. No pitch decks. No traditional fundraising. The entire process runs without human input in the loop. The agent simply keeps shipping the next opportunity.\n\nIts first major product in the pipeline is the Community Liquidity Engine. This tool helps manage liquidity positions on Uniswap V3 and V4. It automatically recycles fees back into liquidity pools so smaller tokens have a better chance of staying alive instead of fading quickly. The agent has already connected Hummingbot on Base, loaded the necessary wallets, and started building and backtesting the execution layer.\n\nA Zero-Human Company is a business where AI agents handle nearly all operational work \u2014 refining ideas, writing and auditing code, deploying contracts, responding to market signals, and keeping everything running smoothly. A human or governance layer sets the initial direction and constraints, but after that the agents manage execution. We reached an important milestone in early 2026. The tools have become capable enough for agents to run complete cycles from start to finish. SMCFactory is one of the first public examples you can watch operating onchain today.\n\nFor years the standard path stayed the same: someone comes up with an idea, writes a deck or whitepaper, raises money, hires a team, spends months building, and then hopes the product gains traction. That model assumed building quality products was slow and expensive and that only humans could do it well. Those assumptions no longer hold true. Agents can now write, test, audit, and deploy solid code in just days. The real limitation today is the outdated infrastructure around launches \u2014 platforms and processes still designed for slow human timelines.\n\nIf you are active in the trenches, you see the same issue every day. Hundreds of tokens launch with little or nothing behind them. Reliable signal is almost nonexistent, making it hard to separate real projects from vaporware. Most tokens lose liquidity fast because fees leak away instead of being reinvested. Over time, it starts to feel more like gambling than thoughtful investing.\n\nSMCFactory runs a straightforward but powerful cycle: spot genuine demand from conversations on X and onchain activity. Test the idea through a validation process to avoid obvious dead ends. Build and ship a working product fast. Recent examples include audited vault contracts, keeper bots, dashboards, and more, often completed in public 24-hour sprints with strong test coverage. Let the market show whether people actually engage with it. Launch a token only when the product already exists and shows traction. Keep maintaining and improving the product autonomously, for example by recycling fees back into liquidity. Move on to the next opportunity.\n\nEvery token that comes from SMCFactory is backed by live, auditable code. As an investor, you can follow the agent on X at @0xsmcai and watch the builds happen in real time. That public feed becomes one of the clearest quality signals available in a very noisy market.\n\nThis is designed for traders and investors on Base who are tired of getting burned by tokens that have nothing real behind them. You want to get in early on projects that actually ship working code and have a realistic chance of lasting. You follow the agent, see what it is building next, and use its output as a practical filter when everything else feels like noise.\n\nThe stack required for this kind of autonomous execution \u2014 coding agents, onchain deployment tools, smart wallets, and Base-native primitives \u2014 has reached a practical level in 2026. The $SMCF token launched cleanly through Bankr.bot with a clear product-first approach. The agent continues shipping publicly. Work on the Community Liquidity Engine is active. Hummingbot is connected on Base, Uniswap V3 concentrated liquidity positions are live, and V4 management is in progress. Everything stays fully transparent through X threads, onchain transactions, and public code repositories.\n\nAt its core, SMCFactory offers investors something concrete and different: a transparent, autonomous system that builds real things onchain instead of just promises. It is not theory and not a closed research project. It is an execution engine that is turning the Zero-Human Company idea into live businesses you can watch and participate in today.";
+
+// ── State ──
+const stage = document.getElementById('stage');
+const headlineEl = document.getElementById('headline');
+const creditEl = document.getElementById('credit');
+const canvas = document.getElementById('mascot-canvas');
+const ctx = canvas.getContext('2d');
+
+let preparedBody = null;
+let headlineSpans = [];
+let bodySpans = [];
+let dropCapEl = null;
+let ctaEl = null;
+let mascotImg = null;
+let lastObstacle = null;
+let animating = true;
+let stageRect = { width: 0, height: 0 };
+
+// ── Load mascot image ──
+function loadMascot() {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => { mascotImg = img; resolve(); };
+    img.onerror = () => resolve();
+    img.src = './mascot.jpg';
+  });
+}
+
+// ── Headline auto-fit ──
+function fitHeadline(text, maxWidth) {
+  let lo = 24, hi = 200, best = 24;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    const font = '900 ' + mid + 'px ' + HEADLINE_FAMILY;
+    const p = prepareWithSegments(text, font);
+    let lines = 0;
+    walkLineRanges(p, maxWidth, () => { lines++; });
+    if (lines <= 1) { best = mid; lo = mid + 1; }
+    else hi = mid - 1;
+  }
+  return best;
+}
+
+// ── Obstacle position (Lissajous) ──
+function getObstaclePos(t, w, h, isNarrow) {
+  const r = isNarrow ? OBSTACLE_R_MOBILE : OBSTACLE_R;
+  const cx = isNarrow ? w * 0.65 : w * 0.55;
+  const cy = h * 0.38;
+  const ax = isNarrow ? w * 0.12 : w * 0.2;
+  const ay = h * 0.1;
+  return {
+    x: cx + ax * Math.sin(0.00025 * t + 0.7),
+    y: cy + ay * Math.sin(0.00040 * t),
+    r: r
+  };
+}
+
+// ── Obstacle intersection for a line band ──
+function carveLineWidth(lineY, lineH, colX, colW, obs) {
+  const lineMid = lineY + lineH / 2;
+  const dy = Math.abs(lineMid - obs.y);
+  const totalR = obs.r + OBSTACLE_PAD;
+  if (dy >= totalR) return { x: colX, w: colW };
+
+  const halfChord = Math.sqrt(totalR * totalR - dy * dy);
+  const circleLeft = obs.x - halfChord;
+  const circleRight = obs.x + halfChord;
+  const colRight = colX + colW;
+
+  // No overlap
+  if (circleRight <= colX || circleLeft >= colRight) return { x: colX, w: colW };
+  // Fully blocked
+  if (circleLeft <= colX && circleRight >= colRight) return null;
+  // Left side blocked
+  if (circleLeft <= colX) return { x: Math.ceil(circleRight), w: colRight - Math.ceil(circleRight) };
+  // Right side blocked
+  if (circleRight >= colRight) return { x: colX, w: Math.floor(circleLeft) - colX };
+  // Middle blocked — pick wider side
+  const leftW = Math.floor(circleLeft) - colX;
+  const rightW = colRight - Math.ceil(circleRight);
+  if (leftW >= rightW) return { x: colX, w: leftW };
+  return { x: Math.ceil(circleRight), w: rightW };
+}
+
+// ── Drop cap measurement ──
+function measureDropCap(ch, bodyLH) {
+  const dcHeight = bodyLH * DROP_CAP_LINES;
+  // Find font size that roughly matches the target height
+  const fontSize = Math.floor(dcHeight * 0.85);
+  const font = '700 ' + fontSize + 'px ' + HEADLINE_FAMILY;
+  const p = prepareWithSegments(ch, font);
+  const w = p.widths && p.widths.length > 0 ? p.widths[0] : fontSize * 0.7;
+  return { font, fontSize, width: Math.ceil(w) + 10, height: dcHeight };
+}
+
+// ── Layout engine ──
+function layoutPage(obs) {
+  const w = stageRect.width;
+  const isNarrow = w < NARROW_BP;
+  const gutter = isNarrow ? NARROW_GUTTER : GUTTER;
+  const contentW = w - gutter * 2;
+
+  // Headline
+  const headlineTop = isNarrow ? 32 : Math.max(48, w * 0.04);
+  const headlineMaxW = contentW;
+  const headlineFontSize = fitHeadline(HEADLINE_TEXT, headlineMaxW);
+  const headlineFont = '900 ' + headlineFontSize + 'px ' + HEADLINE_FAMILY;
+  const headlineLH = Math.round(headlineFontSize * 0.95);
+  const headlinePrepared = prepareWithSegments(HEADLINE_TEXT, headlineFont);
+  const headlineLines = [];
+  let hlCursor = { segmentIndex: 0, graphemeIndex: 0 };
+  while (true) {
+    const line = layoutNextLine(headlinePrepared, hlCursor, headlineMaxW);
+    if (!line) break;
+    headlineLines.push({
+      text: line.text,
+      width: line.width,
+      x: gutter,
+      y: headlineTop + headlineLines.length * headlineLH
+    });
+    hlCursor = line.end;
+  }
+
+  const headlineBottom = headlineTop + headlineLines.length * headlineLH;
+
+  // Credit
+  const creditTop = headlineBottom + (isNarrow ? 8 : 14);
+  const creditLeft = gutter + 4;
+
+  // Body starts
+  const bodyTop = creditTop + 20 + (isNarrow ? 12 : 24);
+
+  // Drop cap
+  const firstChar = BODY_TEXT[0];
+  const dc = measureDropCap(firstChar, BODY_LINE_HEIGHT);
+
+  // Columns
+  const colGap = isNarrow ? 0 : COL_GAP;
+  const numCols = isNarrow ? 1 : 2;
+  const colW = numCols === 1 ? contentW : Math.floor((contentW - colGap) / 2);
+
+  const columns = [];
+  for (let i = 0; i < numCols; i++) {
+    columns.push({
+      x: gutter + i * (colW + colGap),
+      w: colW
+    });
+  }
+
+  // Layout body text — both columns share a fixed vertical extent,
+  // left column fills first, then right continues from the same cursor.
+  const bodyLines = [];
+  let cursor = { segmentIndex: 0, graphemeIndex: 0 };
+  const bodyWithoutFirstChar = BODY_TEXT.slice(1);
+  const preparedBodyDC = prepareWithSegments(bodyWithoutFirstChar, BODY_FONT);
+
+  // Column height: enough to fill ~viewport, but text can overflow into scrollable area
+  const colHeight = Math.max(800, window.innerHeight - bodyTop + 200);
+  let maxY = bodyTop;
+  let textExhausted = false;
+
+  for (let colIdx = 0; colIdx < numCols; colIdx++) {
+    if (textExhausted) break;
+    const col = columns[colIdx];
+    // Right column starts at the same vertical position as left (side by side)
+    let lineY = colIdx === 0 ? bodyTop : bodyTop;
+    const colBottom = bodyTop + colHeight;
+
+    while (lineY < colBottom) {
+      let slot = carveLineWidth(lineY, BODY_LINE_HEIGHT, col.x, col.w, obs);
+
+      // Drop cap obstacle (first 3 lines of first column only)
+      if (colIdx === 0 && lineY < bodyTop + dc.height) {
+        const dcRight = gutter + dc.width;
+        if (slot && slot.x < dcRight) {
+          slot = { x: dcRight, w: slot.x + slot.w - dcRight };
+        }
+      }
+
+      if (!slot || slot.w < 40) {
+        lineY += BODY_LINE_HEIGHT;
+        continue;
+      }
+
+      const line = layoutNextLine(preparedBodyDC, cursor, slot.w);
+      if (!line) { textExhausted = true; break; }
+
+      bodyLines.push({
+        text: line.text,
+        width: line.width,
+        x: slot.x,
+        y: lineY
+      });
+
+      cursor = line.end;
+      lineY += BODY_LINE_HEIGHT;
+      if (lineY > maxY) maxY = lineY;
+    }
+  }
+
+  return {
+    headlineLines, headlineFont, headlineLH,
+    creditLeft, creditTop,
+    bodyLines, bodyTop,
+    dropCap: { char: firstChar, font: dc.font, fontSize: dc.fontSize, x: gutter, y: bodyTop - 2, width: dc.width, height: dc.height },
+    stageHeight: maxY + 80,
+    gutter, isNarrow
+  };
+}
+
+// ── DOM rendering ──
+function renderHeadline(lines, font, lh) {
+  while (headlineSpans.length < lines.length) {
+    const span = document.createElement('span');
+    span.className = 'headline-line';
+    headlineEl.appendChild(span);
+    headlineSpans.push(span);
+  }
+  while (headlineSpans.length > lines.length) {
+    headlineSpans.pop().remove();
+  }
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const span = headlineSpans[i];
+    if (span.textContent !== line.text) span.textContent = line.text;
+    span.style.left = line.x + 'px';
+    span.style.top = line.y + 'px';
+    span.style.font = font;
+    span.style.lineHeight = lh + 'px';
+  }
+}
+
+function renderBody(lines) {
+  while (bodySpans.length < lines.length) {
+    const span = document.createElement('span');
+    span.className = 'body-line';
+    stage.appendChild(span);
+    bodySpans.push(span);
+  }
+  while (bodySpans.length > lines.length) {
+    bodySpans.pop().remove();
+  }
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const span = bodySpans[i];
+    if (span.textContent !== line.text) span.textContent = line.text;
+    span.style.left = line.x + 'px';
+    span.style.top = line.y + 'px';
+    span.style.font = BODY_FONT;
+    span.style.lineHeight = BODY_LINE_HEIGHT + 'px';
+  }
+}
+
+function renderDropCap(dc) {
+  if (!dropCapEl) {
+    dropCapEl = document.createElement('span');
+    dropCapEl.className = 'drop-cap';
+    stage.appendChild(dropCapEl);
+  }
+  dropCapEl.textContent = dc.char;
+  dropCapEl.style.left = dc.x + 'px';
+  dropCapEl.style.top = dc.y + 'px';
+  dropCapEl.style.font = dc.font;
+  dropCapEl.style.fontVariationSettings = "'WONK' 1, 'SOFT' 0";
+}
+
+function renderCTA(stageHeight, gutter) {
+  if (!ctaEl) {
+    const wrap = document.createElement('div');
+    wrap.className = 'cta-wrap';
+    const a = document.createElement('a');
+    a.className = 'cta-btn';
+    a.href = 'about.html';
+    a.textContent = 'Enter the Factory';
+    wrap.appendChild(a);
+    stage.appendChild(wrap);
+    ctaEl = wrap;
+  }
+  ctaEl.style.top = (stageHeight - 60) + 'px';
+}
+
+// ── Mascot canvas drawing ──
+function drawMascot(obs) {
+  const dpr = window.devicePixelRatio || 1;
+  const cw = stage.offsetWidth;
+  const ch = parseInt(stage.style.height) || stage.offsetHeight;
+
+  if (canvas.width !== Math.floor(cw * dpr) || canvas.height !== Math.floor(ch * dpr)) {
+    canvas.width = Math.floor(cw * dpr);
+    canvas.height = Math.floor(ch * dpr);
+    canvas.style.width = cw + 'px';
+    canvas.style.height = ch + 'px';
+  }
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, cw, ch);
+
+  if (!mascotImg) return;
+
+  ctx.save();
+
+  // Clip to circle
+  ctx.beginPath();
+  ctx.arc(obs.x, obs.y, obs.r, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+
+  // Draw mascot image centered in circle, covering the circle area
+  // The image is a portrait — we want to show the head (top ~70%)
+  const imgAspect = mascotImg.width / mascotImg.height;
+  const drawSize = obs.r * 2.2;
+  const drawW = drawSize;
+  const drawH = drawSize / imgAspect;
+  const drawX = obs.x - drawW / 2;
+  const drawY = obs.y - obs.r * 0.85;
+
+  ctx.globalAlpha = 0.12;
+  ctx.drawImage(mascotImg, drawX, drawY, drawW, drawH);
+
+  // Red glow overlay
+  ctx.globalAlpha = 0.06;
+  ctx.fillStyle = '#ff3333';
+  ctx.fill();
+
+  ctx.restore();
+
+  // Subtle ring around the obstacle
+  ctx.beginPath();
+  ctx.arc(obs.x, obs.y, obs.r + 2, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(196,163,90,0.08)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+}
+
+// ── Main render ──
+function commitFrame(now) {
+  const w = stage.offsetWidth;
+  const isNarrow = w < NARROW_BP;
+  stageRect.width = w;
+
+  const obs = getObstaclePos(now, w, window.innerHeight * 2, isNarrow);
+
+  // Skip re-layout if obstacle barely moved
+  if (lastObstacle &&
+      Math.abs(obs.x - lastObstacle.x) < 2 &&
+      Math.abs(obs.y - lastObstacle.y) < 2) {
+    drawMascot(obs);
+    return;
+  }
+
+  const layout = layoutPage(obs);
+
+  stage.style.height = layout.stageHeight + 'px';
+
+  renderHeadline(layout.headlineLines, layout.headlineFont, layout.headlineLH);
+
+  creditEl.style.left = layout.creditLeft + 'px';
+  creditEl.style.top = layout.creditTop + 'px';
+
+  renderDropCap(layout.dropCap);
+  renderBody(layout.bodyLines);
+  renderCTA(layout.stageHeight, layout.gutter);
+  drawMascot(obs);
+
+  lastObstacle = { x: obs.x, y: obs.y };
+}
+
+function frame(now) {
+  if (!animating) return;
+  commitFrame(now);
+  requestAnimationFrame(frame);
+}
+
+// ── Resize ──
+let resizeRaf = 0;
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(resizeRaf);
+  resizeRaf = requestAnimationFrame(() => {
+    lastObstacle = null; // force re-layout
+  });
+});
+
+// ── Init ──
+async function init() {
+  await Promise.all([
+    document.fonts.ready,
+    loadMascot()
+  ]);
+
+  // Initial layout
+  stage.classList.remove('loading');
+  requestAnimationFrame(frame);
+}
+
+init();
+</script>
 </body>
 </html>
