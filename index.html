@@ -16,7 +16,7 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
-  background: #0e0e0e;
+  background: #1a1210;
   color: #d4d0c8;
   min-height: 100vh;
   overflow-x: hidden;
@@ -72,10 +72,14 @@ body {
   z-index: 1;
   font-family: 'Satoshi', sans-serif;
   font-weight: 400;
-  color: #d4d0c8;
+  color: #a9a4a1;
   white-space: pre;
   overflow: hidden;
 }
+
+.w-name { color: #b53943; }
+.w-ticker { color: #98d4e0; }
+.w-addr { color: #a9a4a1; }
 
 .drop-cap { display: none; }
 
@@ -123,7 +127,7 @@ body {
 <div id="stage" class="loading">
   <canvas id="mascot-canvas"></canvas>
   <h1 class="headline" id="headline"></h1>
-  <p class="credit" id="credit">Startup Factory Positioning Note &mdash; March 30, 2026</p>
+  <p class="credit" id="credit">Early Stage Narrative</p>
 </div>
 
 <div class="scanlines"></div>
@@ -373,6 +377,17 @@ function renderHeadline(lines, font, lh) {
   }
 }
 
+// ── Colorize body text: each word gets its mascot color ──
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function colorizeText(text) {
+  return text.replace(/(SMCFactory)|(\$SMCF)|(0x[0-9a-fA-F]+)/g, function(m, name, ticker, addr) {
+    if (name) return '<span class="w-name">' + esc(name) + '</span>';
+    if (ticker) return '<span class="w-ticker">' + esc(ticker) + '</span>';
+    if (addr) return '<span class="w-addr">' + esc(addr) + '</span>';
+    return esc(m);
+  });
+}
+
 function renderBody(lines) {
   while (bodySpans.length < lines.length) {
     const span = document.createElement('span');
@@ -386,7 +401,11 @@ function renderBody(lines) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const span = bodySpans[i];
-    if (span.textContent !== line.text) span.textContent = line.text;
+    const colored = colorizeText(line.text);
+    if (span._lastHtml !== colored) {
+      span.innerHTML = colored;
+      span._lastHtml = colored;
+    }
     span.style.left = line.x + 'px';
     span.style.top = line.y + 'px';
     span.style.width = line.slotW + 'px';
