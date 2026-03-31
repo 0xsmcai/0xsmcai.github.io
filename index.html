@@ -74,6 +74,7 @@ body {
   font-weight: 400;
   color: #d4d0c8;
   white-space: pre;
+  overflow: hidden;
 }
 
 .drop-cap { display: none; }
@@ -219,16 +220,20 @@ function fitHeadline(text, maxWidth) {
 }
 
 // ── Obstacle position (Lissajous) ──
-// bodyTop/bodyH are the actual content region so the obstacle stays inside the text
+// Wanders chaotically across the full content area
 function getObstaclePos(t, w, bodyTop, bodyH, isNarrow) {
   const r = isNarrow ? OBSTACLE_R_MOBILE : OBSTACLE_R;
-  const cx = isNarrow ? w * 0.65 : w * 0.55;
-  const cy = bodyTop + bodyH * 0.4;
-  const ax = isNarrow ? w * 0.12 : w * 0.2;
-  const ay = bodyH * 0.12;
+  const gutter = isNarrow ? NARROW_GUTTER : GUTTER;
+  // Center of the content area
+  const cx = w / 2;
+  const cy = bodyTop + bodyH * 0.42;
+  // Amplitude: nearly full content width and good vertical range
+  const ax = (w / 2 - gutter - r) * 0.85;
+  const ay = bodyH * 0.28;
+  // Two incommensurate frequencies for chaotic-looking motion
   return {
-    x: cx + ax * Math.sin(0.00025 * t + 0.7),
-    y: cy + ay * Math.sin(0.00040 * t),
+    x: cx + ax * Math.sin(0.00031 * t + 0.7) * Math.cos(0.00013 * t),
+    y: cy + ay * Math.sin(0.00047 * t) * Math.cos(0.00019 * t + 1.2),
     r: r
   };
 }
@@ -353,6 +358,7 @@ function layoutPage(obs) {
       bodyLines.push({
         text: line.text,
         width: line.width,
+        slotW: slot.w,
         x: slot.x,
         y: lineY
       });
@@ -410,6 +416,7 @@ function renderBody(lines) {
     if (span.textContent !== line.text) span.textContent = line.text;
     span.style.left = line.x + 'px';
     span.style.top = line.y + 'px';
+    span.style.width = line.slotW + 'px';
     span.style.font = BODY_FONT;
     span.style.lineHeight = BODY_LINE_HEIGHT + 'px';
   }
