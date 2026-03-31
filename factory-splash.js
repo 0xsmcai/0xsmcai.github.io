@@ -1,22 +1,31 @@
-// factory-splash.js — Pretext ASCII art splash with cycling text overlay
-// Background: Somnai-style particle attractor ASCII art (proportional font via pretext)
-// Foreground: cycling text overlay ("SMCFactory", "$SMCF", contract address)
+// factory-splash.js — Pretext ASCII art that renders cycling text
+// Text is rendered to a hidden canvas, sampled per-cell for brightness,
+// then mapped to proportional characters via pretext width measurement.
 import { prepareWithSegments } from "./pretext.js";
 
 // ── Config ──
-var COLS = 60;
-var ROWS = 30;
+var COLS = 70;
+var ROWS = 20;
 var FONT_SIZE = 13;
-var LINE_HEIGHT = 15;
-var TARGET_ROW_W = 480;
+var LINE_HEIGHT = 16;
+var TARGET_ROW_W = 560;
 var PROP_FAMILY = 'Georgia, Palatino, "Times New Roman", serif';
-var CANVAS_W = 240;
-var CANVAS_H = 120;
-var PARTICLE_N = 120;
-var SPRITE_R = 14;
 var CHARSET = " .,:;!+-=*#@%&abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$";
 var WEIGHTS = [300, 500, 800];
 var STYLES = ["normal", "italic"];
+
+// Text to cycle through
+var TEXTS = ["SMCFactory", "$SMCF", "0x9326314259102CFb0448e3a5022188D56e61CBa3"];
+var TEXT_DURATION = 3500;
+var FADE_DURATION = 500;
+
+// Hidden text canvas — large enough for crisp text rendering
+var TEXT_W = 700;
+var TEXT_H = 200;
+var textCvs = document.createElement("canvas");
+textCvs.width = TEXT_W;
+textCvs.height = TEXT_H;
+var textCtx = textCvs.getContext("2d", { willReadFrequently: true });
 
 // ── Brightness measurement ──
 var bCvs = document.createElement("canvas");
@@ -86,38 +95,46 @@ function findBest(targetB) {
   return best;
 }
 
-// ── Particle system (Somnai attractor style) ──
-var particles = [];
-for (var i = 0; i < PARTICLE_N; i++) {
-  var angle = Math.random() * Math.PI * 2;
-  var r = Math.random() * 40 + 20;
-  particles.push({
-    x: CANVAS_W / 2 + Math.cos(angle) * r,
-    y: CANVAS_H / 2 + Math.sin(angle) * r,
-    vx: (Math.random() - 0.5) * 0.8,
-    vy: (Math.random() - 0.5) * 0.8
-  });
+// ── Render text to hidden canvas ──
+function renderTextBitmap(text) {
+  textCtx.clearRect(0, 0, TEXT_W, TEXT_H);
+  textCtx.fillStyle = "#000";
+  textCtx.fillRect(0, 0, TEXT_W, TEXT_H);
+
+  // Auto-size: find the largest font that fits
+  var fontSize = 120;
+  textCtx.textAlign = "center";
+  textCtx.textBaseline = "middle";
+
+  if (text.length > 30) {
+    // Contract address — two lines
+    var half1 = text.slice(0, 21);
+    var half2 = text.slice(21);
+    fontSize = 32;
+    textCtx.font = "bold " + fontSize + "px Impact, Arial Black, sans-serif";
+    // Shrink if too wide
+    while (textCtx.measureText(half1).width > TEXT_W * 0.9 && fontSize > 12) {
+      fontSize--;
+      textCtx.font = "bold " + fontSize + "px Impact, Arial Black, sans-serif";
+    }
+    textCtx.fillStyle = "#fff";
+    textCtx.fillText(half1, TEXT_W / 2, TEXT_H / 2 - fontSize * 0.6);
+    textCtx.fillText(half2, TEXT_W / 2, TEXT_H / 2 + fontSize * 0.6);
+  } else {
+    textCtx.font = "bold " + fontSize + "px Impact, Arial Black, sans-serif";
+    // Shrink if too wide
+    while (textCtx.measureText(text).width > TEXT_W * 0.85 && fontSize > 20) {
+      fontSize -= 2;
+      textCtx.font = "bold " + fontSize + "px Impact, Arial Black, sans-serif";
+    }
+    textCtx.fillStyle = "#fff";
+    textCtx.fillText(text, TEXT_W / 2, TEXT_H / 2);
+  }
+
+  return textCtx.getImageData(0, 0, TEXT_W, TEXT_H).data;
 }
 
-// Simulation canvas
-var sCvs = document.createElement("canvas");
-sCvs.width = CANVAS_W;
-sCvs.height = CANVAS_H;
-var sCtx = sCvs.getContext("2d", { willReadFrequently: true });
-
-// Sprite
-var spriteCvs = document.createElement("canvas");
-var sr = SPRITE_R;
-spriteCvs.width = spriteCvs.height = sr * 2;
-var sprCtx = spriteCvs.getContext("2d");
-var grad = sprCtx.createRadialGradient(sr, sr, 0, sr, sr, sr);
-grad.addColorStop(0, "rgba(255,255,255,0.45)");
-grad.addColorStop(0.35, "rgba(255,255,255,0.15)");
-grad.addColorStop(1, "rgba(255,255,255,0)");
-sprCtx.fillStyle = grad;
-sprCtx.fillRect(0, 0, sr * 2, sr * 2);
-
-// ── DOM ──
+// ── DOM rows ──
 var artBox = document.getElementById("ascii-art");
 var artRows = [];
 for (var r = 0; r < ROWS; r++) {
@@ -126,45 +143,6 @@ for (var r = 0; r < ROWS; r++) {
   div.style.height = div.style.lineHeight = LINE_HEIGHT + "px";
   artBox.appendChild(div);
   artRows.push(div);
-}
-
-// ── Text overlay cycling ──
-var TEXTS = ["SMCFactory", "$SMCF", "0x9326314259102CFb0448e3a5022188D56e61CBa3"];
-var TEXT_DURATION = 4000;
-var FADE_DURATION = 600;
-var currentTextIdx = 0;
-var lastTextSwitch = 0;
-var textOverlay = document.getElementById("text-overlay");
-
-function updateTextOverlay(now) {
-  if (now - lastTextSwitch > TEXT_DURATION || lastTextSwitch === 0) {
-    if (lastTextSwitch !== 0) currentTextIdx = (currentTextIdx + 1) % TEXTS.length;
-    lastTextSwitch = now;
-  }
-
-  var elapsed = now - lastTextSwitch;
-  var opacity = 1;
-  if (elapsed < FADE_DURATION) opacity = elapsed / FADE_DURATION;
-  else if (elapsed > TEXT_DURATION - FADE_DURATION) opacity = Math.max(0, (TEXT_DURATION - elapsed) / FADE_DURATION);
-
-  var text = TEXTS[currentTextIdx];
-  textOverlay.textContent = text;
-  textOverlay.style.opacity = opacity;
-
-  // Adjust font size based on text length
-  if (text.length > 30) {
-    textOverlay.style.fontSize = "clamp(8px, 1.8vw, 14px)";
-    textOverlay.style.wordBreak = "break-all";
-    textOverlay.style.maxWidth = "90%";
-  } else if (text.length > 10) {
-    textOverlay.style.fontSize = "clamp(14px, 3vw, 24px)";
-    textOverlay.style.wordBreak = "normal";
-    textOverlay.style.maxWidth = "none";
-  } else {
-    textOverlay.style.fontSize = "clamp(18px, 4vw, 36px)";
-    textOverlay.style.wordBreak = "normal";
-    textOverlay.style.maxWidth = "none";
-  }
 }
 
 function esc(c) {
@@ -180,66 +158,51 @@ function wCls(w, s) {
   return s === "italic" ? wc + " it" : wc;
 }
 
-// ── Main render loop ──
+// ── State ──
+var currentTextIdx = 0;
+var lastTextSwitch = 0;
+var currentBitmap = null;
+var shimmerOffset = 0;
+
+// ── Sampling with shimmer effect ──
+function sampleBitmap(bitmap, c, row, shimmer) {
+  var cx = Math.min(TEXT_W - 1, (c / COLS * TEXT_W) | 0);
+  var cy = Math.min(TEXT_H - 1, (row / ROWS * TEXT_H) | 0);
+  var idx = (cy * TEXT_W + cx) * 4;
+  var base = (bitmap[idx] + bitmap[idx + 1] + bitmap[idx + 2]) / (3 * 255);
+  // Add shimmer wave
+  if (base > 0.05) {
+    var wave = Math.sin((c * 0.3) + (row * 0.2) + shimmer) * 0.15 + 0.85;
+    base *= wave;
+  }
+  return Math.max(0, Math.min(1, base));
+}
+
+// ── Render loop ──
 function render(now) {
-  // Update text overlay
-  updateTextOverlay(now);
-
-  // Particle attractors (orbiting sinusoidally like Somnai)
-  var a1x = Math.cos(now * 0.0007) * CANVAS_W * 0.25 + CANVAS_W / 2;
-  var a1y = Math.sin(now * 0.0011) * CANVAS_H * 0.3 + CANVAS_H / 2;
-  var a2x = Math.cos(now * 0.0013 + Math.PI) * CANVAS_W * 0.2 + CANVAS_W / 2;
-  var a2y = Math.sin(now * 0.0009 + Math.PI) * CANVAS_H * 0.25 + CANVAS_H / 2;
-
-  for (var i = 0; i < particles.length; i++) {
-    var p = particles[i];
-    var d1x = a1x - p.x, d1y = a1y - p.y;
-    var d2x = a2x - p.x, d2y = a2y - p.y;
-    var dist1 = d1x * d1x + d1y * d1y;
-    var dist2 = d2x * d2x + d2y * d2y;
-    var ax = dist1 < dist2 ? d1x : d2x;
-    var ay = dist1 < dist2 ? d1y : d2y;
-    var dist = Math.sqrt(Math.min(dist1, dist2)) + 1;
-    p.vx += ax / dist * 0.12;
-    p.vy += ay / dist * 0.12;
-    p.vx += (Math.random() - 0.5) * 0.25;
-    p.vy += (Math.random() - 0.5) * 0.25;
-    p.vx *= 0.97;
-    p.vy *= 0.97;
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < -sr) p.x += CANVAS_W + sr * 2;
-    if (p.x > CANVAS_W + sr) p.x -= CANVAS_W + sr * 2;
-    if (p.y < -sr) p.y += CANVAS_H + sr * 2;
-    if (p.y > CANVAS_H + sr) p.y -= CANVAS_H + sr * 2;
+  // Text cycling
+  if (now - lastTextSwitch > TEXT_DURATION || lastTextSwitch === 0) {
+    if (lastTextSwitch !== 0) currentTextIdx = (currentTextIdx + 1) % TEXTS.length;
+    lastTextSwitch = now;
+    currentBitmap = renderTextBitmap(TEXTS[currentTextIdx]);
   }
 
-  // Render particles
-  sCtx.fillStyle = "rgba(0,0,0,0.18)";
-  sCtx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-  sCtx.globalCompositeOperation = "lighter";
-  for (var i = 0; i < particles.length; i++) {
-    sCtx.drawImage(spriteCvs, particles[i].x - sr, particles[i].y - sr);
-  }
-  sCtx.globalCompositeOperation = "source-over";
+  // Fade in/out
+  var elapsed = now - lastTextSwitch;
+  var opacity = 1;
+  if (elapsed < FADE_DURATION) opacity = elapsed / FADE_DURATION;
+  else if (elapsed > TEXT_DURATION - FADE_DURATION) opacity = Math.max(0, (TEXT_DURATION - elapsed) / FADE_DURATION);
 
-  // Sample and render ASCII
-  var imgData = sCtx.getImageData(0, 0, CANVAS_W, CANVAS_H).data;
+  shimmerOffset = now * 0.003;
 
-  function sample(c, row) {
-    var cx = Math.min(CANVAS_W - 1, (c / COLS * CANVAS_W) | 0);
-    var cy = Math.min(CANVAS_H - 1, (row / ROWS * CANVAS_H) | 0);
-    var idx = (cy * CANVAS_W + cx) * 4;
-    return Math.min(1, (imgData[idx] + imgData[idx + 1] + imgData[idx + 2]) / (3 * 255));
-  }
-
+  // Render ASCII from text bitmap
   var rowWidths = [];
   for (var row = 0; row < ROWS; row++) {
     var html = "";
     var tw = 0;
     for (var c = 0; c < COLS; c++) {
-      var b = sample(c, row);
-      if (b < 0.03) {
+      var b = sampleBitmap(currentBitmap, c, row, shimmerOffset) * opacity;
+      if (b < 0.04) {
         html += " ";
         tw += spaceW;
       } else {

@@ -61,30 +61,12 @@
   .a9 { color: rgba(196,163,90,0.90); }
   .a10 { color: rgba(196,163,90,1.0); }
 
-  /* ── Text overlay (cycling text) ── */
-  #text-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -70%);
-    z-index: 8;
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(18px, 4vw, 36px);
-    color: rgba(255,255,255,0.95);
-    text-shadow: 0 0 20px rgba(196,163,90,0.6), 0 0 40px rgba(196,163,90,0.3);
-    text-align: center;
-    letter-spacing: 3px;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    line-height: 1.6;
-  }
-
   /* ── CTA button ── */
   .cta-wrap {
     position: absolute;
-    top: 60%;
+    bottom: 15%;
     left: 50%;
-    transform: translate(-50%, 0);
+    transform: translateX(-50%);
     z-index: 10;
   }
 
@@ -146,8 +128,6 @@
 <body>
 
   <div id="ascii-art"></div>
-
-  <div id="text-overlay">SMCFactory</div>
 
   <div class="cta-wrap">
     <a class="cta-btn" href="about.html">ENTER THE FACTORY</a>
