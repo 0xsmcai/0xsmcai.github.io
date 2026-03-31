@@ -488,9 +488,9 @@ function drawMascot(obs) {
     drawW = d;
     drawH = d / imgAspect;
   }
-  // Center horizontally, shift up slightly to focus on the head/face
+  // Center horizontally, shift up to show full head including antennas
   const drawX = obs.x - drawW / 2;
-  const drawY = obs.y - drawH * 0.42;
+  const drawY = obs.y - drawH * 0.52;
 
   ctx.globalAlpha = 1.0;
   ctx.drawImage(mascotImg, drawX, drawY, drawW, drawH);
