@@ -219,12 +219,13 @@ function fitHeadline(text, maxWidth) {
 }
 
 // ── Obstacle position (Lissajous) ──
-function getObstaclePos(t, w, h, isNarrow) {
+// bodyTop/bodyH are the actual content region so the obstacle stays inside the text
+function getObstaclePos(t, w, bodyTop, bodyH, isNarrow) {
   const r = isNarrow ? OBSTACLE_R_MOBILE : OBSTACLE_R;
   const cx = isNarrow ? w * 0.65 : w * 0.55;
-  const cy = h * 0.38;
+  const cy = bodyTop + bodyH * 0.4;
   const ax = isNarrow ? w * 0.12 : w * 0.2;
-  const ay = h * 0.1;
+  const ay = bodyH * 0.12;
   return {
     x: cx + ax * Math.sin(0.00025 * t + 0.7),
     y: cy + ay * Math.sin(0.00040 * t),
@@ -495,13 +496,28 @@ function drawMascot(obs) {
   ctx.stroke();
 }
 
+// ── Estimate where body text starts (cheap, no full layout needed) ──
+function estimateBodyTop(w, isNarrow) {
+  const gutter = isNarrow ? NARROW_GUTTER : GUTTER;
+  const contentW = w - gutter * 2;
+  const headlineTop = isNarrow ? 32 : Math.max(48, w * 0.04);
+  const headlineFontSize = fitHeadline(HEADLINE_TEXT, contentW);
+  const headlineLH = Math.round(headlineFontSize * 0.95);
+  const headlineBottom = headlineTop + headlineLH; // single line
+  const creditTop = headlineBottom + (isNarrow ? 8 : 14);
+  return creditTop + 20 + (isNarrow ? 12 : 24);
+}
+
 // ── Main render ──
 function commitFrame(now) {
   const w = stage.offsetWidth;
   const isNarrow = w < NARROW_BP;
   stageRect.width = w;
 
-  const obs = getObstaclePos(now, w, window.innerHeight * 2, isNarrow);
+  // Estimate body region so obstacle stays inside the text area
+  const bodyTop = estimateBodyTop(w, isNarrow);
+  const colHeight = Math.max(800, window.innerHeight - bodyTop + 200);
+  const obs = getObstaclePos(now, w, bodyTop, colHeight, isNarrow);
 
   // Skip re-layout if obstacle barely moved
   if (lastObstacle &&
