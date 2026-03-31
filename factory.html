@@ -8,689 +8,134 @@
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    font-family: 'Press Start 2P', monospace;
-    overflow-x: hidden;
-    background: #5c94fc;
+  html, body {
+    background: linear-gradient(180deg, #0a0a12 0%, #06060a 100%);
+    color: #ddd8d0;
     min-height: 100vh;
-  }
-
-  /* ── SKY ── */
-  .sky {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    min-height: 640px;
-    background: linear-gradient(180deg, #5c94fc 0%, #88b4fc 50%, #a4d4fc 100%);
     overflow: hidden;
   }
 
-  /* Clouds */
-  .cloud {
-    position: absolute;
-    background: #fff;
-  }
-  .cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; }
-  .cloud-1 { width: 80px; height: 28px; top: 6%; left: 10%; animation: drift 30s linear infinite; }
-  .cloud-1::before { width: 40px; height: 20px; top: -14px; left: 12px; }
-  .cloud-1::after { width: 28px; height: 16px; top: -10px; left: 40px; }
-  .cloud-2 { width: 60px; height: 24px; top: 10%; left: 60%; animation: drift 35s linear infinite; animation-delay: -10s; }
-  .cloud-2::before { width: 32px; height: 18px; top: -12px; left: 8px; }
-  .cloud-2::after { width: 24px; height: 14px; top: -8px; left: 28px; }
-  .cloud-3 { width: 70px; height: 26px; top: 4%; left: 85%; animation: drift 25s linear infinite; animation-delay: -5s; }
-  .cloud-3::before { width: 36px; height: 18px; top: -12px; left: 10px; }
-  .cloud-3::after { width: 28px; height: 14px; top: -10px; left: 34px; }
-  .cloud-4 { width: 50px; height: 20px; top: 14%; left: 35%; animation: drift 40s linear infinite; animation-delay: -15s; }
-  .cloud-4::before { width: 28px; height: 14px; top: -10px; left: 6px; }
-  .cloud-4::after { width: 20px; height: 12px; top: -8px; left: 24px; }
-  .cloud-5 { width: 90px; height: 30px; top: 3%; left: 50%; animation: drift 28s linear infinite; animation-delay: -20s; }
-  .cloud-5::before { width: 44px; height: 22px; top: -16px; left: 14px; }
-  .cloud-5::after { width: 32px; height: 18px; top: -12px; left: 46px; }
-  .cloud-6 { width: 55px; height: 22px; top: 18%; left: 75%; animation: drift 33s linear infinite; animation-delay: -8s; }
-  .cloud-6::before { width: 30px; height: 16px; top: -12px; left: 8px; }
-  .cloud-6::after { width: 22px; height: 12px; top: -8px; left: 26px; }
-  .cloud-7 { width: 65px; height: 24px; top: 8%; left: 25%; animation: drift 38s linear infinite; animation-delay: -25s; }
-  .cloud-7::before { width: 34px; height: 18px; top: -12px; left: 10px; }
-  .cloud-7::after { width: 26px; height: 14px; top: -10px; left: 32px; }
-
-  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-120vw); } }
-
-  /* ── NV ON CLOUD (left) ── */
-  .nv-cloud {
-    position: absolute;
-    top: 6%;
-    left: 8%;
-    z-index: 12;
+  body {
+    font-family: 'Press Start 2P', monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
-    animation: cloud-shake-nv 3.5s ease-in-out infinite;
-  }
-
-  .nv-img {
-    width: clamp(48px, 8vw, 80px);
-    height: auto;
-    image-rendering: pixelated;
-    margin-bottom: -8px;
-    z-index: 13;
+    justify-content: center;
+    height: 100vh;
     position: relative;
   }
 
-  .nv-seat {
-    width: clamp(72px, 12vw, 120px);
-    height: clamp(20px, 3vw, 32px);
-    background: #fff;
+  /* ── ASCII art container ── */
+  #ascii-art {
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 14px;
+    background: rgba(0,0,0,0.4);
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 4px 20px rgba(0,0,0,0.3);
     position: relative;
-    opacity: 0.9;
+    z-index: 1;
   }
-  .nv-seat::before {
-    content: '';
-    position: absolute;
-    background: #fff;
-    width: 60%;
-    height: 60%;
-    top: -40%;
-    left: 15%;
+
+  .art-row {
+    white-space: pre;
+    font-family: Georgia, Palatino, "Times New Roman", serif;
+    font-size: 13px;
   }
-  .nv-seat::after {
-    content: '';
+
+  /* Font weight classes */
+  .w3 { font-weight: 300; }
+  .w5 { font-weight: 500; }
+  .w8 { font-weight: 800; }
+  .it { font-style: italic; }
+
+  /* Brightness/opacity classes — golden amber */
+  .a1 { color: rgba(196,163,90,0.10); }
+  .a2 { color: rgba(196,163,90,0.20); }
+  .a3 { color: rgba(196,163,90,0.30); }
+  .a4 { color: rgba(196,163,90,0.40); }
+  .a5 { color: rgba(196,163,90,0.50); }
+  .a6 { color: rgba(196,163,90,0.60); }
+  .a7 { color: rgba(196,163,90,0.70); }
+  .a8 { color: rgba(196,163,90,0.80); }
+  .a9 { color: rgba(196,163,90,0.90); }
+  .a10 { color: rgba(196,163,90,1.0); }
+
+  /* ── CTA button ── */
+  .cta-wrap {
     position: absolute;
-    background: #fff;
-    width: 40%;
-    height: 50%;
-    top: -30%;
+    top: 50%;
     left: 50%;
-  }
-
-  .nv-title {
-    position: absolute;
-    bottom: -22px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(0.5rem, 0.8vw, 0.55rem);
-    color: #333;
-    text-shadow: 1px 1px 0 #fff;
-    white-space: nowrap;
-    font-family: 'Press Start 2P', monospace;
-    z-index: 14;
-    text-align: center;
-    line-height: 1.6;
-  }
-
-  @keyframes cloud-shake-nv {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    25% { transform: translateY(-2px) rotate(-0.4deg); }
-    50% { transform: translateY(3px) rotate(0.3deg); }
-    75% { transform: translateY(-1px) rotate(-0.2deg); }
-  }
-
-  /* ── GARRY ON CLOUD (right) ── */
-  .garry-cloud {
-    position: absolute;
-    top: 6%;
-    right: 8%;
-    z-index: 12;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: cloud-shake 3s ease-in-out infinite;
-  }
-
-  .garry-img {
-    width: clamp(48px, 8vw, 80px);
-    height: auto;
-    image-rendering: pixelated;
-    margin-bottom: -8px;
-    z-index: 13;
-    position: relative;
-  }
-
-  .garry-seat {
-    width: clamp(72px, 12vw, 120px);
-    height: clamp(20px, 3vw, 32px);
-    background: #fff;
-    border-radius: 0;
-    position: relative;
-    opacity: 0.9;
-  }
-  .garry-seat::before {
-    content: '';
-    position: absolute;
-    background: #fff;
-    width: 60%;
-    height: 60%;
-    top: -40%;
-    left: 15%;
-  }
-  .garry-seat::after {
-    content: '';
-    position: absolute;
-    background: #fff;
-    width: 40%;
-    height: 50%;
-    top: -30%;
-    left: 50%;
-  }
-
-  .garry-title {
-    position: absolute;
-    bottom: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(0.5rem, 0.9vw, 0.6rem);
-    color: #333;
-    text-shadow: 1px 1px 0 #fff;
-    white-space: nowrap;
-    font-family: 'Press Start 2P', monospace;
-    z-index: 14;
-  }
-
-  @keyframes cloud-shake {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    25% { transform: translateY(-3px) rotate(0.5deg); }
-    50% { transform: translateY(2px) rotate(-0.3deg); }
-    75% { transform: translateY(-2px) rotate(0.2deg); }
-  }
-
-  /* ── TITLE ── */
-  .title-block {
-    position: absolute;
-    top: 3%;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    z-index: 10;
-    width: 90%;
-  }
-
-  .title {
-    font-size: clamp(1.2rem, 4vw, 2.4rem);
-    color: #fff;
-    text-shadow: 3px 3px 0 #222, -1px -1px 0 #222;
-    letter-spacing: 4px;
-  }
-
-  .subtitle {
-    font-size: clamp(0.5rem, 1.4vw, 0.8rem);
-    color: #ffd700;
-    text-shadow: 2px 2px 0 #333;
-    margin-top: 8px;
-    letter-spacing: 2px;
-  }
-
-  /* ── CTA BUTTON ── */
-  .cta {
-    position: absolute;
-    top: 34%;
-    left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 10;
   }
 
-  .cta a {
+  .cta-btn {
     display: inline-block;
     font-family: 'Press Start 2P', monospace;
-    font-size: clamp(0.45rem, 1.1vw, 0.65rem);
+    font-size: clamp(10px, 1.4vw, 14px);
     color: #fff;
-    background: rgba(180, 40, 40, 0.6);
-    border: 4px solid #cc2222;
-    padding: clamp(16px, 2.5vw, 24px) clamp(24px, 5vw, 48px);
+    background: rgba(0,0,0,0.7);
+    border: 2px solid rgba(196,163,90,0.6);
+    padding: 16px 32px;
     text-decoration: none;
-    text-shadow: 1px 1px 0 #333;
+    text-shadow: 0 0 8px rgba(196,163,90,0.5);
     cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 2px;
     min-height: 44px;
-    animation: cta-blink 1.5s step-end infinite;
   }
 
-  .cta a:hover, .cta a:active {
-    background: rgba(200, 50, 50, 0.8);
+  .cta-btn:hover {
+    background: rgba(196,163,90,0.15);
+    border-color: rgba(196,163,90,0.9);
+    box-shadow: 0 0 20px rgba(196,163,90,0.3);
   }
 
-  @keyframes cta-blink {
-    0%, 100% { color: #fff; }
-    50% { color: rgba(255, 255, 255, 0.3); }
-  }
-
-  .cta-mobile { display: none; }
-  @media (hover: none) and (pointer: coarse) {
-    .cta-desktop { display: none; }
-    .cta-mobile { display: inline; }
-  }
-
-  /* ── GROUND ── */
-  .ground {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 80px;
-    background: #c84c0c;
-    border-top: 8px solid #e09040;
-  }
-  .ground::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    width: 100%;
-    height: 8px;
-    background: repeating-linear-gradient(90deg, #e09040 0px, #e09040 32px, #c84c0c 32px, #c84c0c 64px);
-  }
-
-  .grass {
-    position: absolute;
-    bottom: 80px;
-    width: 100%;
-    height: 20px;
-    background: #00a800;
-    border-top: 4px solid #30d030;
-  }
-
-  /* ── HILLS ── */
-  .hill {
-    position: absolute;
-    bottom: 100px;
-    border-radius: 50% 50% 0 0;
-    background: #30a030;
-  }
-  .hill-1 { width: clamp(100px, 20vw, 200px); height: clamp(40px, 8vw, 80px); left: 3%; }
-  .hill-2 { width: clamp(80px, 14vw, 140px); height: clamp(32px, 6vw, 56px); left: 68%; }
-
-  /* ── HOPPER (wide funnel catching startups) ── */
-  .hopper {
-    position: absolute;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
+  /* ── Scanline overlay ── */
+  .scanlines {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
     z-index: 5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
   }
 
-  /* Wide opening at top (funnel mouth) */
-  .hopper-mouth {
-    width: clamp(280px, 55vw, 480px);
-    height: clamp(16px, 2.5vw, 24px);
-    background: #00c800;
-    border: 4px solid #006800;
-    border-radius: 4px 4px 0 0;
-  }
-
-  /* Tapered body */
-  .hopper-body {
-    width: clamp(280px, 55vw, 480px);
-    height: clamp(70px, 12vw, 110px);
-    background: #00a800;
-    border-left: 4px solid #006800;
-    border-right: 4px solid #006800;
-    border-bottom: 4px solid #006800;
-    clip-path: polygon(0% 0%, 100% 0%, 82% 100%, 18% 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(8px, 1.5vw, 16px);
-    padding: 0 clamp(30px, 7vw, 70px);
-  }
-
-  /* Skill labels inside the hopper */
-  .hopper-skill {
-    text-align: center;
-    font-size: clamp(0.5rem, 0.9vw, 0.6rem);
-    color: #fff;
-    text-shadow: 1px 1px 0 #004400;
-    line-height: 1.5;
-    flex: 1;
-  }
-
-  .hopper-skill .name {
-    color: #ffd700;
-    font-size: clamp(0.5rem, 0.9vw, 0.55rem);
-  }
-
-  /* Skill descriptions below hopper */
-  .hopper-skills-row {
-    display: flex;
-    gap: clamp(8px, 2vw, 20px);
-    margin-top: 6px;
-    justify-content: center;
-  }
-
-  .hopper-desc {
-    text-align: center;
-    font-size: clamp(0.5rem, 0.85vw, 0.55rem);
-    color: #000;
-    line-height: 1.4;
-  }
-
-  /* Narrow output spout */
-  .hopper-spout {
-    width: clamp(40px, 6vw, 60px);
-    height: clamp(20px, 3vw, 32px);
-    background: #00a800;
-    border-left: 4px solid #006800;
-    border-right: 4px solid #006800;
-    border-bottom: 4px solid #006800;
-  }
-
-  /* ── CASTLE ── */
-  .castle {
-    position: absolute;
-    right: clamp(8px, 3vw, 40px);
-    bottom: 100px;
-    z-index: 5;
-  }
-
-  .castle-body {
-    width: clamp(64px, 10vw, 100px);
-    height: clamp(64px, 10vw, 100px);
-    background: #e0a060;
-    border: 3px solid #c08040;
-    position: relative;
-  }
-
-  .castle-door {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: clamp(18px, 3vw, 28px);
-    height: clamp(24px, 4vw, 36px);
-    background: #333;
-    border-radius: 50% 50% 0 0;
-  }
-
-  .castle-tower {
-    position: absolute;
-    top: clamp(-24px, -3vw, -40px);
-    width: clamp(20px, 3vw, 32px);
-    height: clamp(24px, 3vw, 40px);
-    background: #e0a060;
-    border: 3px solid #c08040;
-  }
-  .castle-tower-l { left: -2px; }
-  .castle-tower-r { right: -2px; }
-
-  .castle-flag {
-    position: absolute;
-    top: clamp(-40px, -5vw, -60px);
-    left: 50%;
-    transform: translateX(-50%);
-    width: 3px;
-    height: clamp(16px, 2vw, 24px);
-    background: #333;
-  }
-  .castle-flag::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 3px;
-    width: 12px;
-    height: 8px;
-    background: #ff4444;
-  }
-
-  .castle-label {
-    text-align: center;
-    font-size: clamp(0.5rem, 1vw, 0.65rem);
-    color: #fff;
-    text-shadow: 1px 1px 0 #333;
-    margin-top: 6px;
-    line-height: 1.8;
-  }
-
-  .castle-vc {
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(0.5rem, 0.9vw, 0.6rem);
-    color: #cc2222;
-    text-shadow: 1px 1px 0 #000;
-    text-align: center;
-    line-height: 2.2;
-    white-space: nowrap;
-  }
-
-  /* ── IDEA ITEMS (falling directly into pipes) ── */
-  .idea-item {
-    position: absolute;
-    z-index: 8;
-    width: clamp(32px, 5vw, 44px);
-    height: clamp(32px, 5vw, 44px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(0.5rem, 0.9vw, 0.6rem);
-    color: #fff;
-    text-shadow: 1px 1px 0 #000;
-    text-align: center;
-    border: 3px solid;
-    opacity: 0;
-  }
-
-  /* All ideas fall into the wide hopper — scattered start, converge to center */
-  .idea-item.i1 { background: rgba(92,148,252,0.9); border-color: #4488ff; animation: drop-into 5s ease-in infinite; animation-delay: 0s; }
-  .idea-item.i2 { background: rgba(170,68,255,0.9); border-color: #aa44ff; animation: drop-into 5s ease-in infinite; animation-delay: 1.2s; }
-  .idea-item.i3 { background: rgba(255,170,0,0.9); border-color: #ffaa00; animation: drop-into 5s ease-in infinite; animation-delay: 2.4s; }
-  .idea-item.i4 { background: rgba(0,200,100,0.9); border-color: #00c864; animation: drop-into 5s ease-in infinite; animation-delay: 3.6s; }
-
-  /* Scattered start positions */
-  .idea-item.i1 { left: 20%; }
-  .idea-item.i2 { left: 35%; }
-  .idea-item.i3 { left: 55%; }
-  .idea-item.i4 { left: 68%; }
-
-  /* All converge into hopper mouth (centered ~50%) */
-  @keyframes drop-into {
-    0% { top: 18%; opacity: 0; transform: scale(1); }
-    10% { opacity: 1; }
-    50% { top: calc(100% - 230px); opacity: 1; transform: scale(1); }
-    70% { top: calc(100% - 200px); left: 47%; opacity: 0.7; transform: scale(0.8); }
-    85% { top: calc(100% - 180px); left: 48%; opacity: 0.3; transform: scale(0.4); }
-    90% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-
-  /* ── PRODUCT (walks to castle) ── */
-  .product {
-    position: absolute;
-    bottom: 104px;
-    z-index: 8;
-    width: clamp(24px, 3.5vw, 32px);
-    height: clamp(24px, 3.5vw, 32px);
-    background: #ffd700;
-    border: 3px solid #cc9900;
-    box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(0.7rem, 1.2vw, 1rem);
-    animation: walk-to-castle 10s linear infinite;
-    opacity: 0;
-  }
-
-  @keyframes walk-to-castle {
-    0% { right: 45%; opacity: 0; }
-    10% { right: 45%; opacity: 1; }
-    75% { right: clamp(80px, 14vw, 150px); opacity: 1; }
-    85% { right: clamp(70px, 12vw, 130px); opacity: 0.5; }
-    90% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-
-  /* ── QUESTION BLOCKS ── */
-  .q-block {
-    position: absolute;
-    width: clamp(28px, 4vw, 36px);
-    height: clamp(28px, 4vw, 36px);
-    background: #e09040;
-    border: 3px solid #c87020;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(0.6rem, 1vw, 0.9rem);
-    color: #fff;
-    text-shadow: 1px 1px 0 #333;
-    z-index: 3;
-  }
-  .q-block::after { content: '?'; }
-  .q1 { top: 30%; left: 12%; animation: bob 2s ease-in-out infinite; }
-  .q2 { top: 28%; left: 48%; animation: bob 2s ease-in-out infinite; animation-delay: 0.7s; }
-  .q3 { top: 28%; left: 78%; animation: bob 2s ease-in-out infinite; animation-delay: 1.4s; }
-
-  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-
-  /* ── GSTACK FORGE LABEL (on ground/orange area) ── */
-  .forge-label {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    font-size: clamp(0.7rem, 1.8vw, 1.2rem);
-    color: #e09040;
-    text-shadow: none;
-    background: transparent;
-    padding: 8px clamp(12px, 2vw, 20px);
-    border: 3px solid #e09040;
-    white-space: nowrap;
-    letter-spacing: 3px;
-  }
-
-  /* ── RED CARPET ── */
-  .carpet {
-    position: absolute;
-    bottom: 80px;
-    right: 0;
-    width: clamp(80px, 16vw, 200px);
-    height: 20px;
-    background: #881122;
-    border-top: 3px solid #bb2244;
-    z-index: 4;
-  }
-
-  /* ── MONEY PARTICLES ── */
-  .money {
-    position: absolute;
-    font-size: clamp(0.8rem, 1.5vw, 1.2rem);
-    opacity: 0;
+  /* ── Credit ── */
+  .credit {
+    position: fixed;
+    bottom: 12px;
+    right: 16px;
+    font: 400 9px/1 'Press Start 2P', monospace;
+    color: rgba(255,255,255,0.08);
     z-index: 6;
-    animation: float-money 5s ease-out infinite;
-  }
-  .money-1 { right: 10%; bottom: 240px; animation-delay: 0s; }
-  .money-2 { right: 16%; bottom: 200px; animation-delay: 2s; }
-  .money-3 { right: 6%; bottom: 260px; animation-delay: 3.5s; }
-
-  @keyframes float-money {
-    0% { opacity: 0; transform: translateY(0); }
-    20% { opacity: 0.8; }
-    100% { opacity: 0; transform: translateY(-50px) translateX(8px); }
   }
 
-  /* ── FOOTER ── */
-  .footer {
-    background: #000;
-    border-top: 4px solid #444;
-    padding: 16px 20px;
-    text-align: center;
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(0.5rem, 0.9vw, 0.6rem);
-    color: #555;
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    #ascii-art { padding: 8px; }
+    .art-row { font-size: 8px; }
+    .cta-btn { font-size: 9px; padding: 12px 20px; }
   }
 </style>
 </head>
 <body>
 
-<div class="sky">
-  <div class="cloud cloud-1"></div>
-  <div class="cloud cloud-2"></div>
-  <div class="cloud cloud-3"></div>
-  <div class="cloud cloud-4"></div>
-  <div class="cloud cloud-5"></div>
-  <div class="cloud cloud-6"></div>
-  <div class="cloud cloud-7"></div>
+  <div id="ascii-art"></div>
 
-  <div class="nv-cloud">
-    <img src="nv.webp" alt="" class="nv-img">
-    <div class="nv-seat">
-      <span class="nv-title">NV<br>Factory Owner</span>
-    </div>
+  <div class="cta-wrap">
+    <a class="cta-btn" href="about.html">ENTER THE FACTORY</a>
   </div>
 
-  <div class="garry-cloud">
-    <img src="garry.webp" alt="" class="garry-img">
-    <div class="garry-seat">
-      <span class="garry-title">GS Guru</span>
-    </div>
-  </div>
+  <div class="scanlines"></div>
+  <div class="credit">Built with pretext</div>
 
-  <div class="title-block">
-    <div class="title">SMC FACTORY</div>
-    <div class="subtitle">AUTONOMOUS STARTUP FACTORY</div>
-  </div>
-
-  <div class="cta">
-    <a href="about.html" target="_blank">
-      <span class="cta-desktop">CLICK TO LEARN MORE</span>
-      <span class="cta-mobile">TAP TO LEARN MORE</span>
-    </a>
-  </div>
-
-  <div class="q-block q1"></div>
-  <div class="q-block q2"></div>
-  <div class="q-block q3"></div>
-
-  <div class="forge-label">GSTACK FORGE</div>
-
-  <div class="idea-item i1">startup</div>
-  <div class="idea-item i2">startup</div>
-  <div class="idea-item i3">startup</div>
-  <div class="idea-item i4">startup</div>
-
-  <div class="product">$</div>
-
-  <div class="hopper">
-    <div class="hopper-mouth"></div>
-    <div class="hopper-body">
-      <div class="hopper-skill"><span class="name">/office-hours</span></div>
-      <div class="hopper-skill"><span class="name">/ceo-review</span></div>
-      <div class="hopper-skill"><span class="name">/eng-review</span></div>
-      <div class="hopper-skill"><span class="name">/ship</span></div>
-    </div>
-    <div class="hopper-spout"></div>
-    <div class="hopper-skills-row">
-      <div class="hopper-desc">validate</div>
-      <div class="hopper-desc">scope</div>
-      <div class="hopper-desc">build</div>
-      <div class="hopper-desc">deploy</div>
-    </div>
-  </div>
-
-  <div class="castle">
-    <div class="castle-flag"></div>
-    <div class="castle-tower castle-tower-l"></div>
-    <div class="castle-tower castle-tower-r"></div>
-    <div class="castle-body">
-      <div class="castle-door"></div>
-      <div class="castle-vc">YC<br>a16z<br>CB</div>
-    </div>
-    <div class="castle-label">VIP<br>LOUNGE</div>
-  </div>
-
-  <div class="carpet"></div>
-
-  <div class="money money-1">$</div>
-  <div class="money money-2">$</div>
-  <div class="money money-3">$</div>
-
-  <div class="hill hill-1"></div>
-  <div class="hill hill-2"></div>
-  <div class="grass"></div>
-  <div class="ground"></div>
-</div>
-
-<div class="footer">
-  &copy; 2026 SMC Factory. All rights reserved.
-</div>
-
+  <script type="module" src="./factory-splash.js"></script>
 </body>
 </html>
