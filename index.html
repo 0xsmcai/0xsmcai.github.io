@@ -79,33 +79,6 @@ body {
 
 .drop-cap { display: none; }
 
-.cta-wrap {
-  position: absolute;
-  z-index: 10;
-  text-align: center;
-  width: 100%;
-}
-
-.cta-btn {
-  display: inline-block;
-  font: 700 12px 'Space Mono', monospace;
-  color: #d4d0c8;
-  background: rgba(0,0,0,0.6);
-  border: 1px solid rgba(196,163,90,0.4);
-  padding: 14px 32px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-}
-
-.cta-btn:hover {
-  background: rgba(196,163,90,0.1);
-  border-color: rgba(196,163,90,0.8);
-  box-shadow: 0 0 20px rgba(196,163,90,0.15);
-  color: #e8e4da;
-}
 
 .scanlines {
   position: fixed;
@@ -306,12 +279,12 @@ function layoutPage(obs) {
 
   const headlineBottom = headlineTop + headlineLines.length * headlineLH;
 
-  // Credit
-  const creditTop = headlineBottom + (isNarrow ? 8 : 14);
+  // Credit — breathing room after headline
+  const creditTop = headlineBottom + (isNarrow ? 20 : 28);
   const creditLeft = gutter + 4;
 
-  // Body starts
-  const bodyTop = creditTop + 20 + (isNarrow ? 12 : 24);
+  // Body starts — clear gap after subtitle
+  const bodyTop = creditTop + 16 + (isNarrow ? 28 : 40);
 
   // Columns
   const colGap = isNarrow ? 0 : COL_GAP;
@@ -435,20 +408,6 @@ function renderDropCap(dc) {
   dropCapEl.style.fontVariationSettings = "'WONK' 1, 'SOFT' 0";
 }
 
-function renderCTA(stageHeight, gutter) {
-  if (!ctaEl) {
-    const wrap = document.createElement('div');
-    wrap.className = 'cta-wrap';
-    const a = document.createElement('a');
-    a.className = 'cta-btn';
-    a.href = 'about.html';
-    a.textContent = 'Enter the Factory';
-    wrap.appendChild(a);
-    stage.appendChild(wrap);
-    ctaEl = wrap;
-  }
-  ctaEl.style.top = (stageHeight - 60) + 'px';
-}
 
 // ── Mascot canvas drawing ──
 function drawMascot(obs) {
@@ -513,8 +472,8 @@ function estimateBodyTop(w, isNarrow) {
   const headlineFontSize = fitHeadline(HEADLINE_TEXT, contentW);
   const headlineLH = Math.round(headlineFontSize * 0.95);
   const headlineBottom = headlineTop + headlineLH; // single line
-  const creditTop = headlineBottom + (isNarrow ? 8 : 14);
-  return creditTop + 20 + (isNarrow ? 12 : 24);
+  const creditTop = headlineBottom + (isNarrow ? 20 : 28);
+  return creditTop + 16 + (isNarrow ? 28 : 40);
 }
 
 // ── Main render ──
@@ -546,7 +505,6 @@ function commitFrame(now) {
   creditEl.style.top = layout.creditTop + 'px';
 
   renderBody(layout.bodyLines);
-  renderCTA(layout.stageHeight, layout.gutter);
   drawMascot(obs);
 
   lastObstacle = { x: obs.x, y: obs.y };
