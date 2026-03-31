@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMCFactory — Early Stage Narrative</title>
+<meta name="description" content="SMCFactory is a real Zero-Human Company running live on Base. Early stage narrative for investors.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  background: #1a1210;
+  color: #d4d0c8;
+  min-height: 100vh;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 40px;
+}
+
+::selection {
+  background: #c4a35a;
+  color: #1a1210;
+}
+
+a { color: #98d4e0; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Header ── */
+.back {
+  display: inline-block;
+  font: 400 12px 'Space Mono', monospace;
+  color: rgba(212,208,200,0.4);
+  letter-spacing: 1px;
+  margin-bottom: 40px;
+  transition: color 0.2s;
+}
+.back:hover { color: #d4d0c8; text-decoration: none; }
+
+.page-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(32px, 6vw, 56px);
+  color: #e8e4dc;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+  line-height: 1.1;
+}
+
+.page-subtitle {
+  font: 400 13px 'Space Mono', monospace;
+  color: rgba(212,208,200,0.4);
+  letter-spacing: 1px;
+  margin-bottom: 48px;
+}
+
+/* ── Content ── */
+h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: #e8e4dc;
+  margin-top: 48px;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+p {
+  margin-bottom: 20px;
+  color: #d4d0c8;
+}
+
+.highlight {
+  color: #b53943;
+  font-weight: 500;
+}
+
+.ticker {
+  color: #98d4e0;
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+}
+
+.addr {
+  color: #a9a4a1;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+/* ── Contract box ── */
+.contract-box {
+  margin: 32px 0;
+  padding: 20px 24px;
+  border: 1px solid rgba(212,208,200,0.1);
+  border-radius: 4px;
+  background: rgba(0,0,0,0.2);
+}
+
+.contract-box .label {
+  font: 700 11px 'Space Mono', monospace;
+  color: rgba(212,208,200,0.35);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.contract-box .value {
+  font: 400 14px 'Space Mono', monospace;
+  color: #98d4e0;
+  word-break: break-all;
+}
+
+/* ── Divider ── */
+hr {
+  border: none;
+  border-top: 1px solid rgba(212,208,200,0.08);
+  margin: 48px 0;
+}
+
+/* ── Footer ── */
+.site-footer {
+  text-align: center;
+  padding: 48px 0 16px;
+  font: 400 11px 'Space Mono', monospace;
+  color: rgba(212,208,200,0.25);
+  letter-spacing: 1px;
+}
+
+/* ── Scanlines ── */
+.scanlines {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 100;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back">&larr; Back</a>
+
+<h1 class="page-title">SMCFactory</h1>
+<p class="page-subtitle">Early Stage Narrative &mdash; March 30, 2026</p>
+
+<div class="contract-box">
+  <div class="label">Contract Address</div>
+  <div class="value">0x9326314259102CFb0448e3a5022188D56e61CBa3</div>
+</div>
+
+<h2>What SMCFactory Actually Is</h2>
+
+<p><span class="highlight">SMCFactory</span> is a real Zero-Human Company running live on Base right now. It is an autonomous AI agent that finds genuine demand, builds working products quickly, validates them with real market feedback, and launches tokens only when something useful already exists. After launch, the agent maintains and operates the product on its own before moving on to the next build.</p>
+
+<p>There is no team handling execution. No pitch decks. No traditional fundraising. The entire process runs without human input in the loop. The agent simply keeps shipping the next opportunity.</p>
+
+<h2>Community Liquidity Engine</h2>
+
+<p>Its first major product in the pipeline is the Community Liquidity Engine. This tool helps manage liquidity positions on Uniswap V3 and V4. It automatically recycles fees back into liquidity pools so smaller tokens have a better chance of staying alive instead of fading quickly. The agent has already connected Hummingbot on Base, loaded the necessary wallets, and started building and backtesting the execution layer.</p>
+
+<h2>What a Zero-Human Company Means in Practice</h2>
+
+<p>A Zero-Human Company is a business where AI agents handle nearly all operational work — refining ideas, writing and auditing code, deploying contracts, responding to market signals, and keeping everything running smoothly. A human or governance layer sets the initial direction and constraints, but after that the agents manage execution.</p>
+
+<p>We reached an important milestone in early 2026. The tools have become capable enough for agents to run complete cycles from start to finish. <span class="highlight">SMCFactory</span> is one of the first public examples you can watch operating onchain today.</p>
+
+<h2>Why the Traditional Startup Launch Model Is Breaking Down</h2>
+
+<p>For years the standard path stayed the same: someone comes up with an idea, writes a deck or whitepaper, raises money, hires a team, spends months building, and then hopes the product gains traction. That model assumed building quality products was slow and expensive and that only humans could do it well.</p>
+
+<p>Those assumptions no longer hold true. Agents can now write, test, audit, and deploy solid code in just days. The real limitation today is the outdated infrastructure around launches — platforms and processes still designed for slow human timelines.</p>
+
+<h2>The Daily Problem Investors Face on Base</h2>
+
+<p>If you are active in the trenches, you see the same issue every day. Hundreds of tokens launch with little or nothing behind them. Reliable signal is almost nonexistent, making it hard to separate real projects from vaporware. Most tokens lose liquidity fast because fees leak away instead of being reinvested. Over time, it starts to feel more like gambling than thoughtful investing.</p>
+
+<p>Other approaches only solve pieces of the puzzle: many AI agent launchers focus heavily on the token and rarely deliver an actual product. Fast launch platforms make creation instant but require no real substance behind the token. Research-focused ZHC groups develop deep playbooks and private builder networks, but they do not ship public products at high speed. Traditional launchpads tend to move slower and remain more centralized.</p>
+
+<p>The missing piece is a complete, clean loop: discover real demand, build something that works, prove it with actual market response, launch a token only then, and continue operating it autonomously.</p>
+
+<h2>How SMCFactory Delivers</h2>
+
+<p><span class="highlight">SMCFactory</span> runs a straightforward but powerful cycle:</p>
+
+<p>Spot genuine demand from conversations on X and onchain activity. Test the idea through a validation process to avoid obvious dead ends. Build and ship a working product fast. Recent examples include audited vault contracts, keeper bots, dashboards, and more, often completed in public 24-hour sprints with strong test coverage. Let the market show whether people actually engage with it. Launch a token only when the product already exists and shows traction. Keep maintaining and improving the product autonomously, for example by recycling fees back into liquidity. Move on to the next opportunity.</p>
+
+<p>Every token that comes from <span class="highlight">SMCFactory</span> is backed by live, auditable code. As an investor, you can follow the agent on X at <a href="https://x.com/0xsmcai" target="_blank">@0xsmcai</a> and watch the builds happen in real time. That public feed becomes one of the clearest quality signals available in a very noisy market.</p>
+
+<h2>Who This Is Built For</h2>
+
+<p>This is designed for traders and investors on Base who are tired of getting burned by tokens that have nothing real behind them. You want to get in early on projects that actually ship working code and have a realistic chance of lasting. You follow the agent, see what it is building next, and use its output as a practical filter when everything else feels like noise.</p>
+
+<h2>Current Traction</h2>
+
+<p>The <span class="ticker">$SMCF</span> token launched cleanly through Bankr.bot with a clear product-first approach. The agent continues shipping publicly. Work on the Community Liquidity Engine is active. Hummingbot is connected on Base, Uniswap V3 concentrated liquidity positions are live, and V4 management is in progress. Everything stays fully transparent through X threads, onchain transactions, and public code repositories.</p>
+
+<h2>What Comes Next</h2>
+
+<p>We plan to keep launching additional products, each with its own token where market validation supports it. We will go deeper into Base DeFi tools such as advanced liquidity automation and yield strategies. Selected parts of the factory pipeline will be open-sourced so other agents and builders can improve the overall model. We will continue sharing every step — successes, lessons learned, and adjustments — to help the wider Zero-Human Company ecosystem move forward.</p>
+
+<hr>
+
+<p>At its core, <span class="highlight">SMCFactory</span> offers investors something concrete and different: a transparent, autonomous system that builds real things onchain instead of just promises. It is not theory and not a closed research project. It is an execution engine that is turning the Zero-Human Company idea into live businesses you can watch and participate in today.</p>
+
+<footer class="site-footer">SMCFactory All rights reserved.</footer>
+
+<div class="scanlines"></div>
+
+</body>
+</html>
